@@ -44,7 +44,7 @@ public class TileGrid : MonoBehaviour {
 		//LoadBonusMap();
 		LoadMap1 ();
 		// Now we need to take the loaded data and generate sprites based on the information
-		GenerateMap();
+		//GenerateMap();
 		
 		// Just an example using GetTile
 		print(GetTile(3,2).tileType);
