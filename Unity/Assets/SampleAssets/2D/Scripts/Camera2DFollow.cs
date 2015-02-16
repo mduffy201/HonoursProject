@@ -20,6 +20,9 @@ namespace UnitySampleAssets._2D
         // Use this for initialization
         private void Start()
         {
+			//Find spawned player on level load
+			target = GameObject.Find("Player(Clone)").transform;
+
             lastTargetPosition = target.position;
             offsetZ = (transform.position - target.position).z;
             transform.parent = null;
@@ -28,7 +31,10 @@ namespace UnitySampleAssets._2D
         // Update is called once per frame
         private void Update()
         {
+			if (target == null) {
+				Debug.Log("No Taget Found");
 
+			}
             // only update lookahead pos if accelerating or changed direction
             float xMoveDelta = (target.position - lastTargetPosition).x;
 

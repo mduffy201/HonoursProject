@@ -65,9 +65,13 @@
      <Compile Include="Assets\SampleAssets\CrossPlatformInput\Scripts\TouchPad.cs" />
      <Compile Include="Assets\SampleAssets\CrossPlatformInput\Scripts\VirtualInput.cs" />
      <Compile Include="Assets\Scirpts\Controls2D.cs" />
+     <Compile Include="Assets\Scirpts\Enemy.cs" />
+     <Compile Include="Assets\Scirpts\LevelLoad.cs" />
+     <Compile Include="Assets\Scirpts\PlayerCollisions.cs" />
      <Compile Include="Assets\Scirpts\PlayerMovement2D.cs" />
      <Compile Include="Assets\Scirpts\Tile.cs" />
      <Compile Include="Assets\Scirpts\TileGrid.cs" />
+     <Compile Include="Assets\Scirpts\TitleContols.cs" />
      <None Include="Assets\SampleAssets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.1/UnityEngine.UI.dll</HintPath>
