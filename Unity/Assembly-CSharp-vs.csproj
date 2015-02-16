@@ -64,9 +64,11 @@
      <Compile Include="Assets\SampleAssets\CrossPlatformInput\Scripts\TiltInput.cs" />
      <Compile Include="Assets\SampleAssets\CrossPlatformInput\Scripts\TouchPad.cs" />
      <Compile Include="Assets\SampleAssets\CrossPlatformInput\Scripts\VirtualInput.cs" />
+     <Compile Include="Assets\Scirpts\Bullet.cs" />
      <Compile Include="Assets\Scirpts\Controls2D.cs" />
      <Compile Include="Assets\Scirpts\Enemy.cs" />
      <Compile Include="Assets\Scirpts\EnemyLoader.cs" />
+     <Compile Include="Assets\Scirpts\Gun.cs" />
      <Compile Include="Assets\Scirpts\LevelLoad.cs" />
      <Compile Include="Assets\Scirpts\PlayerCollisions.cs" />
      <Compile Include="Assets\Scirpts\PlayerMovement2D.cs" />

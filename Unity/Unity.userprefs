@@ -1,6 +1,13 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scirpts\Gun.cs">
+    <Files>
+      <File FileName="Assets\Scirpts\Gun.cs" Line="11" Column="40" />
+      <File FileName="Assets\Scirpts\EnemyLoader.cs" Line="12" Column="131" />
+      <File FileName="Assets\Scirpts\Enemy.cs" Line="54" Column="5" />
+      <File FileName="Assets\Scirpts\Bullet.cs" Line="8" Column="4" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="C:\Users\Mark\Documents\GitHub\HonoursProject\Unity\Assets\MyAssets\Scirpts\TileGrid.cs" line="89" />
