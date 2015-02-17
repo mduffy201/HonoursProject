@@ -5,7 +5,9 @@ public class Gun : MonoBehaviour {
 
 	public Transform gun;
 	private GameObject bullet;
+	public Vector3 newdir;
 
+	Bullet b;
 	// Use this for initialization
 	void Start () {
 		gun = transform.Find ("GunPosition");
@@ -15,7 +17,10 @@ public class Gun : MonoBehaviour {
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.Z)) {
 			Debug.Log("Fire Pressed");	
-			bullet = (GameObject)Instantiate((GameObject)Resources.Load("Bullet/Bullet"), gun.position, Quaternion.identity);
+			newdir = Vector3.right;
+			bullet = (GameObject)Instantiate(Resources.Load("Bullet/BulletPrefab"), gun.position, Quaternion.identity);
+			bullet.GetComponent<Bullet>().SetDir(newdir);
+			//b.direction = Vector3.right;
 		}
 	}
 }
