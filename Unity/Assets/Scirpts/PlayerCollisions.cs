@@ -17,5 +17,10 @@ public class PlayerCollisions : MonoBehaviour {
 						Debug.Log ("Level Finish Triggered");
 			Application.LoadLevel("TitleScreen");
 				}
+		if (collider.name == "Enemy(Clone)") {
+			Debug.Log ("Enemy Killed by head");
+			Application.LoadLevel("TitleScreen");
 		}
+		}
+
 }
