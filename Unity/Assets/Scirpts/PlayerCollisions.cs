@@ -20,7 +20,11 @@ public class PlayerCollisions : MonoBehaviour {
 				}
 		if (collider.name == "EnemyKillCheck") {
 			Debug.Log ("Enemy Killed by head");
-			Application.LoadLevel("TitleScreen");
+
+			Destroy(collider.gameObject.transform.parent.gameObject);
+
+			//Application.LoadLevel("TitleScreen");
+
 		}
 		if (collider.name == "EdgeCheckLeft" || collider.name == "EdgeCheckRight") {
 			Debug.Log("Player Dead");		
