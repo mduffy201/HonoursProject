@@ -7,6 +7,13 @@ public class Bullet: MonoBehaviour {
 	private Vector3 direction;
 	public float speed = 1.0f;
 
+	private BulletOwner owner;
+	public enum BulletOwner{
+		Player,
+		Enemy
+	}
+
+
 	// Use this for initialization
 	void Start () {
 		currentPosition = transform.position;
@@ -21,5 +28,20 @@ public class Bullet: MonoBehaviour {
 	}
 	public void SetDir(Vector3 v3in){
 		direction = v3in;
+	}
+	public void SetOwner(string name){
+		Debug.Log ("Bullet fired by: " + name);
+
+		if (name == "Player(Clone)") {
+			owner = BulletOwner.Player;	
+		
+		}
+	}
+	void OnTriggerEnter2D(Collider2D collider){
+
+		if (owner == BulletOwner.Player && collider.name == "EdgeCheckLeft" || collider.name == "EdgeCheckRight") {
+			Destroy(collider.gameObject.transform.parent.gameObject);
+		
+		}
 	}
 }

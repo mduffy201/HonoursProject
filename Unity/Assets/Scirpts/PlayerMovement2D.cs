@@ -7,14 +7,18 @@ public class PlayerMovement2D : MonoBehaviour
 		private bool facingRight = true; // For determining which way the player is currently facing.
 	
 		[SerializeField]
-		private float maxSpeed = 10f; // The fastest the player can travel in the x axis.
+		private float
+				maxSpeed = 10f; // The fastest the player can travel in the x axis.
 		[SerializeField]
-		private float jumpForce = 400f; // Amount of force added when the player jumps.	
+		private float
+				jumpForce = 400f; // Amount of force added when the player jumps.	
 
 		[SerializeField]
-		private LayerMask whatIsGround; // A mask determining what is ground to the character
+		private LayerMask
+				whatIsGround; // A mask determining what is ground to the character
 		[SerializeField]
-		private bool grounded = true; // Whether or not the player is grounded.
+		private bool
+				grounded = true; // Whether or not the player is grounded.
 		private Transform groundCheck; // A position marking where to check if the player is grounded.
 		private float groundedRadius = .2f; // Radius of the overlap circle to determine if grounded
 
@@ -41,9 +45,9 @@ public class PlayerMovement2D : MonoBehaviour
 				if (grounded) {
 						rigidbody2D.velocity = new Vector2 (move * maxSpeed, rigidbody2D.velocity.y);
 				} 
-		if (!grounded) {
-			rigidbody2D.velocity = new Vector2 ((move * maxSpeed)/2, rigidbody2D.velocity.y);
-		} 
+				if (!grounded) {
+						rigidbody2D.velocity = new Vector2 ((move * maxSpeed) / 2, rigidbody2D.velocity.y);
+				} 
 				// If the input is moving the player right and the player is facing left...
 				if (move > 0 && !facingRight)
 			// ... flip the player.

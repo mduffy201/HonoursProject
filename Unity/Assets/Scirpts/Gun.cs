@@ -20,6 +20,7 @@ public class Gun : MonoBehaviour {
 			newdir = Vector3.right;
 			bullet = (GameObject)Instantiate(Resources.Load("Bullet/BulletPrefab"), gun.position, Quaternion.identity);
 			bullet.GetComponent<Bullet>().SetDir(newdir);
+			bullet.GetComponent<Bullet>().SetOwner(gameObject.name);
 			//b.direction = Vector3.right;
 		}
 	}
