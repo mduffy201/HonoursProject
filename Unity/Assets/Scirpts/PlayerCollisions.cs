@@ -28,7 +28,7 @@ public class PlayerCollisions : MonoBehaviour {
 		}
 		if (collider.name == "EdgeCheckLeft" || collider.name == "EdgeCheckRight") {
 			Debug.Log("Player Dead");		
-		
+			Application.LoadLevel (Application.loadedLevelName);
 		}
 		}
 
