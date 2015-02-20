@@ -13,13 +13,18 @@ public class PlayerCollisions : MonoBehaviour {
 	
 	}
 	void OnTriggerEnter2D(Collider2D collider){
+		Debug.Log (collider.name);
 		if (collider.name == "EndTrigger") {
 						Debug.Log ("Level Finish Triggered");
 			Application.LoadLevel("TitleScreen");
 				}
-		if (collider.name == "Enemy(Clone)") {
+		if (collider.name == "EnemyKillCheck") {
 			Debug.Log ("Enemy Killed by head");
 			Application.LoadLevel("TitleScreen");
+		}
+		if (collider.name == "EdgeCheckLeft" || collider.name == "EdgeCheckRight") {
+			Debug.Log("Player Dead");		
+		
 		}
 		}
 
