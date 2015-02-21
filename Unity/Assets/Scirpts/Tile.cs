@@ -8,6 +8,8 @@ public class Tile  {
 	{
 		Platform,
 		Sky,
+		Start,
+		Finish,
 		Null // Null is required for my generation method
 	}
 	// Create a variable that will hold the tile type for each tile that is created
