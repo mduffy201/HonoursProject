@@ -14,12 +14,30 @@ public class TileGrid : MonoBehaviour
 	
 		// Object that we use to create our map container
 		private GameObject tileParent;
+		private string lSystem;
+		int pattern_horizontal = 15;
+		int pattern_vertical = 5;
+		int pattern_per_section = 4;
+		int level_sections = 4;
+		int total_patterens;
+		Tile[,] pattern;
+		//Tile[][,] level_patterns; 
+		Tile[,] full_level;
 
 
 
 		// Use this for initialization
 		void Start ()
 		{
+
+				total_patterens = level_sections * pattern_per_section;
+				pattern = new Tile[pattern_horizontal, pattern_vertical];
+				full_level = new Tile[pattern_horizontal * level_sections * pattern_per_section, pattern_vertical];
+				//level_patterns = new Tile[total_patterens][pattern_horizontal, pattern_vertical];
+
+
+
+
 				// Create an empty object with the name "Map" to act as the parent for our tiles 
 				tileParent = new GameObject ();
 				tileParent.name = "Map";
@@ -38,11 +56,22 @@ public class TileGrid : MonoBehaviour
 								levelMap [i, j].tileType = Tile.TileType.Sky;
 						}
 				}
-				initTileMap ();
-				LoadNeibours ();
+				InitFullLevel ();
+				CreateLSystemString ();
+				GeneratePatternsUsingLSyem ();
+				DrawFullMap ();
+
+
+
+
+
+
+
+				//initTileMap ();
+				//LoadNeibours ();
 				//	LoadNeibours ();
 				// Draw Generated Map
-				DrawTileMap ();
+				//DrawTileMap ();
 		
 				// Just an example using GetTile
 				print (GetTile (3, 2).tileType);
@@ -65,30 +94,6 @@ public class TileGrid : MonoBehaviour
 				return levelMap [xPos, yPos];
 		}
 
-		public void initTileMap ()
-		{
-				//initial tile map for level, empty tiles.
-				//levelMap;
-				int level_length = levelMap.GetLength (0);
-				int level_height = levelMap.GetLength (1);
-
-				Debug.Log ("Level length: " + level_length);
-
-				//Go up each column, left to right
-				for (int i =0; i < level_length; i++) {
-						for (int j =0; j < level_height; j++) {
-
-								Random.seed = i * j - 1;
-								int tile_state = (int)(Random.value * 1000) % 2;
-
-								if (tile_state == 0) {
-										levelMap [i, j].SwitchState ();
-								}
-			
-						}		
-				}
-		}
-
 		private void LoadNeibours ()
 		{
 				int level_length = levelMap.GetLength (0);
@@ -100,12 +105,12 @@ public class TileGrid : MonoBehaviour
 				for (int i =1; i < level_length-1; i++) {
 						for (int j =1; j < level_height-1; j++) {
 								
-										levelMap [i, j].SetNeighbours (
+								levelMap [i, j].SetNeighbours (
 					levelMap [i, j - 1],
 					levelMap [i - 1, j],
 					levelMap [i, j + 1],
 					levelMap [i + 1, j]
-										);
+								);
 								
 
 
@@ -130,42 +135,150 @@ public class TileGrid : MonoBehaviour
 				//re load neibours
 				LoadNeibours ();
 				//Re draw
-				DrawTileMap ();
+				//DrawTileMap ();
 		}
 
-		// The method that creates a sprite for each tile represented in worldMap[,]
-		public void DrawTileMap ()
+		
+		//=======================================================================================================================
+		private void InitFullLevel ()
 		{
-				// Loop structure is the same as the loops above ^^^
-				for (int i = 0; i < worldSize.x; i++) {
-						for (int j = 0; j < worldSize.y; j++) {
+				Debug.Log ("LevelLength: " + full_level.GetLength (0));
+				Debug.Log ("LevelHeight: " + full_level.GetLength (1));
+				for (int i = 0; i < full_level.GetLength(0); i++) {
+						// For each row, cycle through an entire column
+						for (int j = 0; j < full_level.GetLength(1); j++) {
+								// Now we combine the loops' indexes to make sure each slot has a null tile
+								full_level [i, j] = new Tile ();
+								full_level [i, j].tilePos = new Vector2 (i, j);
+								full_level [i, j].tileType = Tile.TileType.Sky;
+						}
+				}
+		}
 
-								if (levelMap [i, j].state == 0) {
-										levelMap [i, j].tileType = Tile.TileType.Sky;
+		private void CreateLSystemString ()
+		{
+				string Axiom = "AAAB";
+				string temp = "";
+				string result = "";
+				int iterations = 2;
+				//rules { A= AB, B=BC, C=AA}
 
-								} else if (levelMap [i, j].state == 1) {
-										levelMap [i, j].tileType = Tile.TileType.Platform;
+				temp = Axiom;
+				for (int j = 0; j < iterations; j++) {
+						result = "";
+						for (int i = 0; i < temp.Length; i++) {
+
+								switch (temp [i]) {
+								case 'A':
+										result += "AB";
+										break;
+								case 'B':
+										result += "BC";
+										break;
+								case 'C':
+										result += "AA";
+										break;
 								}
+		
+								//Debug.Log ("L-System: " + Axiom);
+						}
+						temp = result;
+
+						Debug.Log ("L-System: " + result);
+						lSystem = result;
+				}
+		}
+
+		private void GeneratePatternsUsingLSyem ()
+		{
+
+				string patternstring = lSystem;
+
+				for (int i = 0; i < patternstring.Length; i++) {
+				
+						switch (patternstring [i]) {
+
+						case 'A':
+								GenAPattern (i + 1);
 
 
+								break;
+						case 'B':
+								GenAPattern (i + 1);
+								break;
+						case 'C':
+								GenAPattern (i + 1);
+								break;
 
+						}
+				}
+		}
+
+		private void GenAPattern (int x_placement)
+		{
+
+
+				//	pattern = new Tile[pattern_horizontal, pattern_vertical];
+
+				for (int i = 0; i < pattern_horizontal; i++) {
+						// For each row, cycle through an entire column
+						//for (int j = 0; j < 2; j++) {
+						// Now we combine the loops' indexes to make sure each slot has a null tile
+						int j = 1;
+						Random.seed = 100;
+						int tile_state = (int)(Random.value) % 2;
+		//	Debug.Log ("Pattern: " + x_placement);	
+			int place = (x_placement-1) * pattern_horizontal + i;
+			Debug.Log ("Level place: " + place);
+			//Debug.Log ("X: " + i + " RANDOM VALUE: " + Random.value);
+						//Debug.Log ("tile state: " + tile_state);
+						if (tile_state == 0) {
+		//						Debug.Log ("switched: " + Random.value * 100);
+								full_level [place , j].SwitchState ();
+						}
+
+
+						//}
+				}
+
+
+		}
+
+		private void DrawFullMap ()
+		{
+
+				// Loop structure is the same as the loops above ^^^
+				for (int i = 0; i < full_level.GetLength(0); i++) {
+						for (int j = 0; j < full_level.GetLength(1); j++) {
+				
+								if (full_level [i, j].state == 0) {
+										full_level [i, j].tileType = Tile.TileType.Sky;
+					
+								} else if (full_level [i, j].state == 1) {
+										full_level [i, j].tileType = Tile.TileType.Platform;
+								}
+				
+				
+				
 								// Check to see if the tile type is null or not
 								// If the tile is null, we know not to try to draw a sprite for it
-								if (levelMap [i, j].tileType != Tile.TileType.Null) {
+								if (full_level [i, j].tileType != Tile.TileType.Null) {
 										// If the tile isn't null, it must exist so let's do some stuff
 										// We're going through the Resources folder, within the Main Map directory and finding a sprite that matches
 										// the TYPE of tile that we've found. ***Make sure the name of the sprite matches the tile types***
 										GameObject tileObject;
 										// We're creating an instance of the sprite object that we find based on the tiletype compared to the object name, storing it in tileSprite
-										tileObject = (GameObject)Instantiate (Resources.Load ("Tiles/Tile"), levelMap [i, j].tilePos, Quaternion.identity);
-										tileObject.GetComponent<TileObject> ().SetTile (levelMap [i, j]);
+										tileObject = (GameObject)Instantiate (Resources.Load ("Tiles/Tile"), full_level [i, j].tilePos, Quaternion.identity);
+										tileObject.GetComponent<TileObject> ().SetTile (full_level [i, j]);
 										//bullet.GetComponent<Bullet>().SetDir(newdir)
 										// Now set the newly created sprite's parent to be the map parent that we created earlier 
 										tileObject.transform.parent = tileParent.transform;
 								}
 						}
 				}
+
 		}
+		
 }
 // Generate Level
 /*public void LoadMap1()
@@ -220,3 +333,61 @@ public class TileGrid : MonoBehaviour
 // for details on how I'm creating the simple tile map
 //LoadBonusMap();
 //LoadMap1 ();
+/*	public void initTileMap ()
+		{
+				//initial tile map for level, empty tiles.
+				//levelMap;
+				int level_length = levelMap.GetLength (0);
+				int level_height = levelMap.GetLength (1);
+
+				Debug.Log ("Level length: " + level_length);
+
+				//Go up each column, left to right
+				for (int i =0; i < level_length; i++) {
+						for (int j =0; j < 2; j++) {
+
+								Random.seed = i * j - 1;
+								int tile_state = (int)(Random.value * 1000) % 2;
+
+								if (tile_state == 0) {
+										levelMap [i, j].SwitchState ();
+								}
+			
+						}		
+				}
+		}*/
+
+// The method that creates a sprite for each tile represented in worldMap[,]
+/*	public void DrawTileMap ()
+		{
+				// Loop structure is the same as the loops above ^^^
+				for (int i = 0; i < worldSize.x; i++) {
+						for (int j = 0; j < worldSize.y; j++) {
+
+								if (levelMap [i, j].state == 0) {
+										levelMap [i, j].tileType = Tile.TileType.Sky;
+
+								} else if (levelMap [i, j].state == 1) {
+										levelMap [i, j].tileType = Tile.TileType.Platform;
+								}
+
+
+
+								// Check to see if the tile type is null or not
+								// If the tile is null, we know not to try to draw a sprite for it
+								if (levelMap [i, j].tileType != Tile.TileType.Null) {
+										// If the tile isn't null, it must exist so let's do some stuff
+										// We're going through the Resources folder, within the Main Map directory and finding a sprite that matches
+										// the TYPE of tile that we've found. ***Make sure the name of the sprite matches the tile types***
+										GameObject tileObject;
+										// We're creating an instance of the sprite object that we find based on the tiletype compared to the object name, storing it in tileSprite
+										tileObject = (GameObject)Instantiate (Resources.Load ("Tiles/Tile"), levelMap [i, j].tilePos, Quaternion.identity);
+										tileObject.GetComponent<TileObject> ().SetTile (levelMap [i, j]);
+										//bullet.GetComponent<Bullet>().SetDir(newdir)
+										// Now set the newly created sprite's parent to be the map parent that we created earlier 
+										tileObject.transform.parent = tileParent.transform;
+								}
+						}
+				}
+		}*/
+
