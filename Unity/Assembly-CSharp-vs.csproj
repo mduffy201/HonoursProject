@@ -68,6 +68,7 @@
      <Compile Include="Assets\Scirpts\Controls2D.cs" />
      <Compile Include="Assets\Scirpts\Enemy.cs" />
      <Compile Include="Assets\Scirpts\EnemyLoader.cs" />
+     <Compile Include="Assets\Scirpts\GapManager.cs" />
      <Compile Include="Assets\Scirpts\Gun.cs" />
      <Compile Include="Assets\Scirpts\LevelGeneration.cs" />
      <Compile Include="Assets\Scirpts\LevelLoad.cs" />

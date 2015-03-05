@@ -11,7 +11,7 @@ public class TileObject : MonoBehaviour {
 	public int ypos;
 
 	//
-	private bool sprite_set = false;
+	public bool sprite_set = false;
 	private SpriteRenderer spriteRenderer;
 	private BoxCollider2D boxCollider;
 
@@ -30,7 +30,12 @@ public class TileObject : MonoBehaviour {
 			{
 			case Tile.TileType.Platform:
 				gameObject.layer = 8;
-				spriteRenderer.sprite = Resources.Load<Sprite> ("Tiles/Ground");
+				if(tile.platformPos == Tile.PlatformPos.Middle){
+					spriteRenderer.sprite = Resources.Load<Sprite> ("Tiles/Ground");
+				}
+				if(tile.platformPos == Tile.PlatformPos.Center){
+				 	spriteRenderer.sprite = Resources.Load<Sprite> ("Tiles/grassMid");
+				}
 				sprite_set = true;
 				break;
 			case Tile.TileType.Sky:

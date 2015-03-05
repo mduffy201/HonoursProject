@@ -24,12 +24,12 @@ public class TileGrid : MonoBehaviour
 		//Tile[][,] level_patterns; 
 		Tile[,] full_level;
 
-
+	GapManager gapManager;
 
 		// Use this for initialization
 		void Start ()
 		{
-
+		gapManager = new GapManager ();
 				total_patterens = level_sections * pattern_per_section;
 				pattern = new Tile[pattern_horizontal, pattern_vertical];
 				full_level = new Tile[pattern_horizontal * level_sections * pattern_per_section, pattern_vertical];
@@ -63,8 +63,13 @@ public class TileGrid : MonoBehaviour
 				LoadNeighbours ();
 
 
-
-
+		gapManager.LoadMap (full_level);
+		gapManager.RegisterGaps ();
+		gapManager.findAverage ();
+		gapManager.ReduceAverage ();
+		gapManager.RegisterGaps ();
+		gapManager.findAverage ();
+		//gapManager.DebugGaps ();
 
 
 				//initTileMap ();
@@ -82,6 +87,7 @@ public class TileGrid : MonoBehaviour
 				if (Input.GetKeyDown (KeyCode.G)) {
 						Debug.Log ("GENERATE");		
 						UpdateTileMap ();
+
 				}
 		}
 
