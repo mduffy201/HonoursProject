@@ -32,7 +32,7 @@ namespace UnitySampleAssets._2D
         private void Update()
         {
 			if (target == null) {
-				Debug.Log("No Taget Found");
+				//Debug.Log("No Taget Found");
 
 			}
             // only update lookahead pos if accelerating or changed direction

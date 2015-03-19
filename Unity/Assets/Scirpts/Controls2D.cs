@@ -28,7 +28,7 @@ public class Controls2D : MonoBehaviour {
 		float h = CrossPlatformInputManager.GetAxis("Horizontal");
 		// Pass all parameters to the character control script.
 		if (h != 0) {
-						character.Move (h, jump);
+					//	character.Move (h, jump);
 				}
 		jump = false;
 	}

@@ -214,8 +214,8 @@ public class TileGrid : MonoBehaviour
 	//Initialise Array of Tiles
 		private void InitFullLevel ()
 		{
-				Debug.Log ("LevelLength: " + full_level.GetLength (0));
-				Debug.Log ("LevelHeight: " + full_level.GetLength (1));
+				//Debug.Log ("LevelLength: " + full_level.GetLength (0));
+				//Debug.Log ("LevelHeight: " + full_level.GetLength (1));
 				for (int i = 0; i < full_level.GetLength(0); i++) {
 						// For each row, cycle through an entire column
 						for (int j = 0; j < full_level.GetLength(1); j++) {

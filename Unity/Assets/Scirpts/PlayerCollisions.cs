@@ -13,7 +13,7 @@ public class PlayerCollisions : MonoBehaviour {
 	
 	}
 	void OnTriggerEnter2D(Collider2D collider){
-		Debug.Log (collider.name);
+		//Debug.Log (collider.name);
 		if (collider.name == "EndTrigger") {
 						Debug.Log ("Level Finish Triggered");
 			Application.LoadLevel("TitleScreen");
