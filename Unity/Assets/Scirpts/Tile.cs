@@ -36,10 +36,13 @@ public class Tile
 		// We can then check each tile to see if we can walk on it or if something else should happen
 		public TileType tileType;
 		public PlatformPos platformPos;
+
 		// A variable that will hold the current position of a tile
 		public Vector2 tilePos;
 
-
+		//Can an enemy spawn on this tile?
+		private bool enemySpawn;
+	private bool atEdge;
 		// Basic Empty constructor that sets the default type to null so that they will not be created
 		public Tile ()
 		{
@@ -47,16 +50,19 @@ public class Tile
 				tileType = TileType.Null;
 				platformPos = PlatformPos.Middle;
 				tile_neighbours = new Tile [8];
-
+				enemySpawn = false;
+		atEdge = false;
 		}
-
-
+	public bool isEnemySpawn(){
+		return enemySpawn;
+	}
 		public void SetNeighbours (Tile tileDown, Tile tileLeft, Tile tileUp, Tile tileRight,
 	                          Tile tileDownLeft, Tile tileUpLeft, Tile tileUpRight, Tile tileDownRight)
 		{
 				/*if( tileDown == null & tileLeft == null){
 			Debug.Log ("LEFT BOTTOM CONER REACHED!!!");
 		}*/
+		//Debug.Log("ENEMY TILE!!! " + tilePos.x + " " + tilePos.y);
 				tile_neighbours [0] = tileDown; //Down
 				tile_neighbours [1] = tileLeft; //Left
 				tile_neighbours [2] = tileUp; //Up
@@ -66,22 +72,29 @@ public class Tile
 				tile_neighbours [6] = tileUpRight; //Up-Right
 				tile_neighbours [7] = tileDownRight; //Down-Right
 
+		for (int i = 0; i < tile_neighbours.Length; i++) {
+			if(tile_neighbours[i] == null){
+				atEdge = true;
+			}		
+		}
 				/*if (tileDown == null & tileLeft == null) {
 						if (tile_neighbours [0] == null) {
 								Debug.Log ("LEFT BOTTOM CONER REACHED!!!: ");
 						}
 				}*/
-		SetSprite ();
+				SetSprite ();
 		}
 
-	private void SetSprite(){
-		if (state == 1) {
-			if(tile_neighbours[2] == null || tile_neighbours[2].state == 0){
-				platformPos = PlatformPos.Center;
-			}
-		}
+		private void SetSprite ()
+		{
+				if (state == 1) {
+						if (tile_neighbours [2] == null || tile_neighbours [2].state == 0) {
+								platformPos = PlatformPos.Center;
+						}
+				}
 	
-	}
+		}
+
 		public void SwitchState ()
 		{
 				if (state == 0) {
@@ -96,8 +109,11 @@ public class Tile
 				
 				RuleTwo ();
 				//RuleThree ();
-				RuleFour ();
-		SetSprite ();
+				//RuleFour ();
+		if (!atEdge) {
+						EnemySpawnRule ();
+				}
+				SetSprite ();
 		}
 
 		private void RuleOne ()
@@ -158,5 +174,23 @@ public class Tile
 								state = 1;
 						}		
 				}
+		}
+
+		private void EnemySpawnRule ()
+		{
+	
+				if (this.state == 0) {
+						if (tile_neighbours [0].state == 1 &&
+								tile_neighbours [4].state == 1 &&
+								tile_neighbours [7].state == 1 &&
+								tile_neighbours [1].state == 0 &&
+								tile_neighbours [3].state == 0 && 
+								tile_neighbours [2].state == 0 && 
+								tile_neighbours [5].state == 0 &&
+								tile_neighbours [6].state == 0) {
+								enemySpawn = true;
+				//Debug.Log("ENEMY TILE!!! " + tilePos.x + " " + tilePos.y);
+						}
+				} 
 		}
 }

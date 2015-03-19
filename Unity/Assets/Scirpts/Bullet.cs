@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
+//Class which controls the movement and interactions of a bullet object
+//attached to bullet gameObject
+
 public class Bullet: MonoBehaviour {
 
 	private Vector3 currentPosition;

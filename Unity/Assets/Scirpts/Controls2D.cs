@@ -27,7 +27,9 @@ public class Controls2D : MonoBehaviour {
 		//bool crouch = Input.GetKey(KeyCode.LeftControl);
 		float h = CrossPlatformInputManager.GetAxis("Horizontal");
 		// Pass all parameters to the character control script.
-		character.Move(h, jump);
+		if (h != 0) {
+						character.Move (h, jump);
+				}
 		jump = false;
 	}
 }

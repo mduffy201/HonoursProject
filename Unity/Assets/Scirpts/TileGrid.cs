@@ -5,99 +5,74 @@ using System.Collections;
 
 public class TileGrid : MonoBehaviour
 {
-
-		// A vector2 that contains the x width and y height of the tile map
-		public Vector2 worldSize;
-	
-		// Array containing data for all tiles within the world map
-		public Tile[,] levelMap;
-	
 		// Object that we use to create our map container
 		private GameObject tileParent;
 		private string lSystem;
-		int pattern_horizontal = 15;
-		int pattern_vertical = 5;
-		int pattern_per_section = 4;
-		int level_sections = 4;
-		int total_patterens;
-		Tile[,] pattern;
-		//Tile[][,] level_patterns; 
-		Tile[,] full_level;
+		private int pattern_horizontal = 15;
+		private int pattern_vertical = 5;
+		private int pattern_per_section = 4;
+		private int level_sections = 4;
+		//private int total_patterens;
+		//private Tile[,] pattern;
+		private Tile[,] full_level;
+		private GapManager gapManager;
 
-	GapManager gapManager;
 
-		// Use this for initialization
-		void Start ()
+	private string Axiom = "AAAB";
+
+	public void InitGenValues(string axiomIn){
+		Axiom = axiomIn;
+	}
+		public void InitLevelMap ()
 		{
-		gapManager = new GapManager ();
-				total_patterens = level_sections * pattern_per_section;
-				pattern = new Tile[pattern_horizontal, pattern_vertical];
+
+	
+
+				//total_patterens = level_sections * pattern_per_section;
 				full_level = new Tile[pattern_horizontal * level_sections * pattern_per_section, pattern_vertical];
-				//level_patterns = new Tile[total_patterens][pattern_horizontal, pattern_vertical];
-
-
-
-
+		
 				// Create an empty object with the name "Map" to act as the parent for our tiles 
 				tileParent = new GameObject ();
 				tileParent.name = "Map";
 		
-		
-				// Set the length of the array to be equal to the vector2 world size
-				levelMap = new Tile[(int)worldSize.x, (int)worldSize.y];
-		
-				// For each row of tile
-				for (int i = 0; i < worldSize.x; i++) {
-						// For each row, cycle through an entire column
-						for (int j = 0; j < worldSize.y; j++) {
-								// Now we combine the loops' indexes to make sure each slot has a null tile
-								levelMap [i, j] = new Tile ();
-								levelMap [i, j].tilePos = new Vector2 (i, j);
-								levelMap [i, j].tileType = Tile.TileType.Sky;
-						}
-				}
 				InitFullLevel ();
 				CreateLSystemString ();
 				GeneratePatternsUsingLSyem ();
-				DrawFullMap ();
+
 				LoadNeighbours ();
-
-
-		gapManager.LoadMap (full_level);
-		gapManager.RegisterGaps ();
-		gapManager.findAverage ();
-		gapManager.ReduceAverage ();
-		gapManager.RegisterGaps ();
-		gapManager.findAverage ();
-		//gapManager.DebugGaps ();
-
-
-				//initTileMap ();
-				//LoadNeibours ();
-				//	LoadNeibours ();
-				// Draw Generated Map
-				//DrawTileMap ();
+				//DrawFullMap ();
+				//gapManager = new GapManager ();
+				/*gapManager.LoadMap (full_level);
+				gapManager.RegisterGaps ();
+				gapManager.findAverage ();
+				gapManager.ReduceAverage ();
+				gapManager.RegisterGaps ();
+				gapManager.findAverage ();*/
 		
-				// Just an example using GetTile
-				print (GetTile (3, 2).tileType);
+		
+				//gapManager.DebugGaps ();
 		}
 
-		void Update ()
+		public void UpdateLevelMap ()
 		{
-				if (Input.GetKeyDown (KeyCode.G)) {
-						Debug.Log ("GENERATE");		
-						UpdateTileMap ();
-
-				}
+				UpdateTileMap ();
 		}
 
-	
+		public void DrawLevelMap ()
+		{
+				DrawFullMap ();
+		}
+		//Get current level of tiles
+		public Tile[,] GetLevelMap ()
+		{
+				return full_level;
+		}
 		// A method for getting data from a tile at a specific coordinate (isn't necessary, but it looks cleaner this way)
 		public Tile GetTile (int xPos, int yPos)
 		{
 				// All this does is return a Tile from the worldMap array.
 				// This could be done without the method with just the array, but this is quicker to write and looks cleaner
-				return levelMap [xPos, yPos];
+				return full_level [xPos, yPos];
 		}
 
 		private void LoadNeighbours ()
@@ -107,8 +82,8 @@ public class TileGrid : MonoBehaviour
 		
 				//			Debug.Log ("Level length: " + level_length);
 
-		int iLevel_length = level_length - 1;
-		int iLevel_height = level_height - 1;
+				int iLevel_length = level_length - 1;
+				int iLevel_height = level_height - 1;
 
 				//CORNER TILES
 				//bottomleft
@@ -118,7 +93,7 @@ public class TileGrid : MonoBehaviour
 				//bottomright
 				full_level [iLevel_length, 0].SetNeighbours (null, full_level [iLevel_length - 1, 0], full_level [iLevel_length, 1], null, null, full_level [iLevel_length - 1, 1], null, null);
 				//topright
-				full_level [0, iLevel_height].SetNeighbours (full_level [iLevel_length, iLevel_height - 1], full_level [iLevel_length - 1, iLevel_height], null, null, full_level [iLevel_length - 1, iLevel_height - 1], null, null, null);
+				full_level [iLevel_length, iLevel_height].SetNeighbours (full_level [iLevel_length, iLevel_height - 1], full_level [iLevel_length - 1, iLevel_height], null, null, full_level [iLevel_length - 1, iLevel_height - 1], null, null, null);
 
 				
 
@@ -130,8 +105,8 @@ public class TileGrid : MonoBehaviour
 
 								//LEFT EDGE TILES			
 								if (i == 0 && j != 0 && j != iLevel_height) {
-									//Set non-edge tiles
-									full_level [i, j].SetNeighbours (
+										//Set non-edge tiles
+										full_level [i, j].SetNeighbours (
 										//Straight 
 										full_level [i, j - 1], //0
 										null,
@@ -146,7 +121,7 @@ public class TileGrid : MonoBehaviour
 								} 
 								//Right EDGE TILES
 								else if (i == iLevel_length && j != 0 && j != iLevel_height) {
-									full_level [i, j].SetNeighbours (
+										full_level [i, j].SetNeighbours (
 										//Straight 
 										full_level [i, j - 1], //0
 										full_level [i - 1, j], //1
@@ -161,7 +136,7 @@ public class TileGrid : MonoBehaviour
 								}
 								//TOP EDGE TILES
 								else if (j == iLevel_height && i != 0 && i != iLevel_length) {
-									full_level [i, j].SetNeighbours (
+										full_level [i, j].SetNeighbours (
 										//Straight 
 										full_level [i, j - 1], //0
 										full_level [i - 1, j], //1
@@ -177,8 +152,8 @@ public class TileGrid : MonoBehaviour
 								}
 								//BOTTOM EDGE TILE
 								else if (j == 0 && i != 0 && i != iLevel_length) {
-									//Set non-edge tiles
-									full_level [i, j].SetNeighbours (
+										//Set non-edge tiles
+										full_level [i, j].SetNeighbours (
 										//Straight 
 										null,
 										full_level [i - 1, j], //1
@@ -193,11 +168,11 @@ public class TileGrid : MonoBehaviour
 								
 
 				
-				}else {
-					//Eliminate corners
-					if(i != 0 && i != iLevel_length && j != 0 && j != iLevel_height){
-										//Set non-edge tiles
-										full_level [i, j].SetNeighbours (
+								} else {
+										//Eliminate corners
+										if (i != 0 && i != iLevel_length && j != 0 && j != iLevel_height) {
+												//Set non-edge tiles
+												full_level [i, j].SetNeighbours (
 											//Straight 
 											full_level [i, j - 1],
 											full_level [i - 1, j],
@@ -208,8 +183,8 @@ public class TileGrid : MonoBehaviour
 											full_level [i - 1, j + 1],
 											full_level [i + 1, j + 1],
 											full_level [i + 1, j - 1]
-										);
-					}
+												);
+										}
 
 								}
 			
@@ -218,13 +193,11 @@ public class TileGrid : MonoBehaviour
 				}
 		}
 
-		public void UpdateTileMap ()
+		private void UpdateTileMap ()
 		{
 				int level_length = full_level.GetLength (0);
 				int level_height = full_level.GetLength (1);
-		
-
-		
+	
 				//Go up each column, left to right
 				for (int i =0; i < level_length; i++) {
 						for (int j =0; j < level_height; j++) {
@@ -234,12 +207,11 @@ public class TileGrid : MonoBehaviour
 				}		
 				//re load neibours
 				LoadNeighbours ();
-				//Re draw
-				DrawFullMap ();
 		}
 
 		
 		//=======================================================================================================================
+	//Initialise Array of Tiles
 		private void InitFullLevel ()
 		{
 				Debug.Log ("LevelLength: " + full_level.GetLength (0));
@@ -257,7 +229,7 @@ public class TileGrid : MonoBehaviour
 
 		private void CreateLSystemString ()
 		{
-				string Axiom = "AAAB";
+				
 				string temp = "";
 				string result = "";
 				int iterations = 2;
@@ -279,12 +251,8 @@ public class TileGrid : MonoBehaviour
 										result += "AA";
 										break;
 								}
-		
-								//Debug.Log ("L-System: " + Axiom);
 						}
 						temp = result;
-
-						//Debug.Log ("L-System: " + result);
 						lSystem = result;
 				}
 		}
@@ -300,8 +268,6 @@ public class TileGrid : MonoBehaviour
 
 						case 'A':
 								GenAPattern (i + 1);
-
-
 								break;
 						case 'B':
 								GenBPattern (i + 1);
@@ -321,10 +287,10 @@ public class TileGrid : MonoBehaviour
 						int j = 0;
 						Random.seed = (int)place;
 						int random_value = (int)(Random.value * 10) * i;
-						int tile_state = random_value % 10;
+						int tile_state = random_value % 4;
 				
 						//int place = (x_placement - 1) * pattern_horizontal + i;
-					
+		//	Debug.Log(tile_state.ToString());
 						//Debug.Log ("Random value: " + random_value);			
 						if (tile_state == 0 || tile_state == 1) {
 								//						Debug.Log ("switched: " + Random.value * 100);

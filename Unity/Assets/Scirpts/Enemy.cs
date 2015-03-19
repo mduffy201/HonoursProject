@@ -89,7 +89,10 @@ public class Enemy : MonoBehaviour
 				}
 				
 		}
-
+	public void SetType(EnemyType typeIn){
+		this.enemyType = typeIn;
+	
+	}
 		private void FixedUpdate ()
 		{
 				if (enemyType == EnemyType.Walker) {
