@@ -72,8 +72,9 @@
      <Compile Include="Assets\Scirpts\GapManager.cs" />
      <Compile Include="Assets\Scirpts\Gun.cs" />
      <Compile Include="Assets\Scirpts\LevelLogic.cs" />
-     <Compile Include="Assets\Scirpts\PlayerCollisions.cs" />
+     <Compile Include="Assets\Scirpts\PlayerManager.cs" />
      <Compile Include="Assets\Scirpts\PlayerMovement2D.cs" />
+     <Compile Include="Assets\Scirpts\PlayerSpawnScript.cs" />
      <Compile Include="Assets\Scirpts\Tile.cs" />
      <Compile Include="Assets\Scirpts\TileGrid.cs" />
      <Compile Include="Assets\Scirpts\TileObject.cs" />

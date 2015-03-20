@@ -39,10 +39,15 @@ public class Tile
 
 		// A variable that will hold the current position of a tile
 		public Vector2 tilePos;
-
+	public int level_length;
+	public int level_height;
 		//Can an enemy spawn on this tile?
 		private bool enemySpawn;
-	private bool atEdge;
+		//Can the Player spawn on this tile
+	private bool playerSpawn;
+	//Can level end spawn here
+	private bool endPoint;
+		private bool atEdge;
 		// Basic Empty constructor that sets the default type to null so that they will not be created
 		public Tile ()
 		{
@@ -51,18 +56,33 @@ public class Tile
 				platformPos = PlatformPos.Middle;
 				tile_neighbours = new Tile [8];
 				enemySpawn = false;
-		atEdge = false;
+				playerSpawn = false;
+				atEdge = false;
+				endPoint = false;
+				level_length = 0;
+				level_height = 0;
 		}
-	public bool isEnemySpawn(){
-		return enemySpawn;
+
+		public bool isEnemySpawn ()
+		{
+				return enemySpawn;
+		}
+	public bool isPlayerSpawn ()
+	{
+		return playerSpawn;
 	}
+	public bool isEndSpawn ()
+	{
+		return endPoint;
+	}
+
 		public void SetNeighbours (Tile tileDown, Tile tileLeft, Tile tileUp, Tile tileRight,
 	                          Tile tileDownLeft, Tile tileUpLeft, Tile tileUpRight, Tile tileDownRight)
 		{
 				/*if( tileDown == null & tileLeft == null){
 			Debug.Log ("LEFT BOTTOM CONER REACHED!!!");
 		}*/
-		//Debug.Log("ENEMY TILE!!! " + tilePos.x + " " + tilePos.y);
+				//Debug.Log("ENEMY TILE!!! " + tilePos.x + " " + tilePos.y);
 				tile_neighbours [0] = tileDown; //Down
 				tile_neighbours [1] = tileLeft; //Left
 				tile_neighbours [2] = tileUp; //Up
@@ -72,11 +92,11 @@ public class Tile
 				tile_neighbours [6] = tileUpRight; //Up-Right
 				tile_neighbours [7] = tileDownRight; //Down-Right
 
-		for (int i = 0; i < tile_neighbours.Length; i++) {
-			if(tile_neighbours[i] == null){
-				atEdge = true;
-			}		
-		}
+				for (int i = 0; i < tile_neighbours.Length; i++) {
+						if (tile_neighbours [i] == null) {
+								atEdge = true;
+						}		
+				}
 				/*if (tileDown == null & tileLeft == null) {
 						if (tile_neighbours [0] == null) {
 								Debug.Log ("LEFT BOTTOM CONER REACHED!!!: ");
@@ -110,9 +130,15 @@ public class Tile
 				RuleTwo ();
 				//RuleThree ();
 				//RuleFour ();
-		if (!atEdge) {
+				if (!atEdge) {
 						EnemySpawnRule ();
 				}
+		if (this.tilePos.x == 0) {
+			PlayerSpawnRule();		
+		}
+		if (this.tilePos.x == level_length-1 ) {
+			EndSpawnRule();		
+		}
 				SetSprite ();
 		}
 
@@ -189,8 +215,22 @@ public class Tile
 								tile_neighbours [5].state == 0 &&
 								tile_neighbours [6].state == 0) {
 								enemySpawn = true;
-				//Debug.Log("ENEMY TILE!!! " + tilePos.x + " " + tilePos.y);
+								//Debug.Log("ENEMY TILE!!! " + tilePos.x + " " + tilePos.y);
 						}
 				} 
 		}
+	private void PlayerSpawnRule(){
+		if (this.state == 0) {
+			if(tile_neighbours[0].state ==1){
+				playerSpawn = true;
+			}
+		}
+	}
+	private void EndSpawnRule(){
+		if (this.state == 0) {
+			if(tile_neighbours[0].state ==1){
+				endPoint = true;
+			}
+		}
+	}
 }

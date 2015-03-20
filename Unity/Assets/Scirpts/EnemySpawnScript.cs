@@ -17,7 +17,7 @@ int speed;
 
 		//enemy_spawn = (GameObject)Resources.Load ("Enemy/EnemySpawn");
 		enemy = (GameObject)Instantiate((GameObject)Resources.Load("Enemy/Enemy"), gameObject.transform.position, Quaternion.identity);
-		enemy.GetComponent<Enemy> ().SetType (Enemy.EnemyType.Shooter);
+		enemy.GetComponent<Enemy> ().SetType (Enemy.EnemyType.Walker);
 	}
 
 	// Use this for initialization

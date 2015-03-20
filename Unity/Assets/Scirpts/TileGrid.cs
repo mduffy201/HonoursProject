@@ -223,6 +223,8 @@ public class TileGrid : MonoBehaviour
 								full_level [i, j] = new Tile ();
 								full_level [i, j].tilePos = new Vector2 (i, j);
 								full_level [i, j].tileType = Tile.TileType.Sky;
+				full_level[i,j].level_length = full_level.GetLength(0);
+				full_level[i,j].level_height = full_level.GetLength(1);
 						}
 				}
 		}

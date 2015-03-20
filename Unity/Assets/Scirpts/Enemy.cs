@@ -29,10 +29,7 @@ public class Enemy : MonoBehaviour
 		[SerializeField]
 		private float
 				shot_timer = 100.0f;
-		
-
-
-	public Transform groundCheck; // A position marking where to check if the player is grounded.
+		public Transform groundCheck; // A position marking where to check if the player is grounded.
 		private float groundedRadius = .2f; // Radius of the overlap circle to determine if grounded
 		public bool grounded = false; // Whether or not the player is grounded.
 
@@ -89,10 +86,13 @@ public class Enemy : MonoBehaviour
 				}
 				
 		}
-	public void SetType(EnemyType typeIn){
-		this.enemyType = typeIn;
+
+		public void SetType (EnemyType typeIn)
+		{
+				this.enemyType = typeIn;
 	
-	}
+		}
+
 		private void FixedUpdate ()
 		{
 				if (enemyType == EnemyType.Walker) {
@@ -101,13 +101,18 @@ public class Enemy : MonoBehaviour
 								RaycastHit2D hit = Physics2D.Raycast (edgeCheckLeft.position, -Vector2.up, 2.0f);
 								collider2D.enabled = true;
 
+
+								
 								if (hit.collider == null) {
 							
 										move = 1.0f;
 										moveDirection = MoveDirection.Right;
 						
+								} else {
+										//Debug.Log ("ENEMY LEFT SENSE: " + hit.collider.name.ToString ());
 								}
 						}
+
 						if (moveDirection == MoveDirection.Right) {
 								collider2D.enabled = false;
 								RaycastHit2D hit = Physics2D.Raycast (edgeCheckRight.position, -Vector2.up, 2.0f);
@@ -118,9 +123,12 @@ public class Enemy : MonoBehaviour
 										move = -1.0f;
 										moveDirection = MoveDirection.Left;
 				
-								}
+				}else {
+					//Debug.Log ("ENEMY RIGHT SENSE: " + hit.collider.name.ToString ());
+				}
 						}
 		
+
 						// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
 						grounded = Physics2D.OverlapCircle (groundCheck.position, groundedRadius, whatIsGround);
 				}
@@ -161,83 +169,84 @@ public class Enemy : MonoBehaviour
 				}
 		}
 
-
 		void Shoot ()
 		{
-		int shot = 4;
-		GameObject[] bullets = new GameObject[4];
-		Vector3[] shot_spawn = new Vector3[shot];
-		Vector3[] shot_dir = new Vector3[shot];
+				int shot = 4;
+				GameObject[] bullets = new GameObject[4];
+				Vector3[] shot_spawn = new Vector3[shot];
+				Vector3[] shot_dir = new Vector3[shot];
 
 
-		shot_spawn [0] = new Vector3 (transform.position.x, transform.position.y + shot_radius, 0.0f);
-		shot_spawn [1] = new Vector3 (transform.position.x + shot_radius, transform.position.y, 0.0f);
-		shot_spawn [2] = new Vector3 (transform.position.x, transform.position.y - shot_radius, 0.0f);
-		shot_spawn [3] = new Vector3 (transform.position.x - shot_radius, transform.position.y, 0.0f);
+				shot_spawn [0] = new Vector3 (transform.position.x, transform.position.y + shot_radius, 0.0f);
+				shot_spawn [1] = new Vector3 (transform.position.x + shot_radius, transform.position.y, 0.0f);
+				shot_spawn [2] = new Vector3 (transform.position.x, transform.position.y - shot_radius, 0.0f);
+				shot_spawn [3] = new Vector3 (transform.position.x - shot_radius, transform.position.y, 0.0f);
 
-		shot_dir [0] = Vector3.up;
-		shot_dir [1] = Vector3.right;
-		shot_dir [2] = -Vector3.up;
-		shot_dir [3] = -Vector3.right;
-		    // b.direction = Vector3.up;
-		//Instantiate ((GameObject)b, shot_spawn [0], Quaternion.identity) as GameObject;
+				shot_dir [0] = Vector3.up;
+				shot_dir [1] = Vector3.right;
+				shot_dir [2] = -Vector3.up;
+				shot_dir [3] = -Vector3.right;
+				// b.direction = Vector3.up;
+				//Instantiate ((GameObject)b, shot_spawn [0], Quaternion.identity) as GameObject;
 
 
-		for (int i = 0; i < shot; i++) {
+				for (int i = 0; i < shot; i++) {
 				
-			bullets[i] = Instantiate((GameObject)Resources.Load("Bullet/BulletPrefab"), shot_spawn[i], Quaternion.identity) as GameObject;
+						bullets [i] = Instantiate ((GameObject)Resources.Load ("Bullet/BulletPrefab"), shot_spawn [i], Quaternion.identity) as GameObject;
 		
-			bullets[i].GetComponent<Bullet>().SetDir(shot_dir[i]);
-				//Bullet b = bullets[i].GetComponent<Bullet>();
-			//b.direction = Vector3.up;
+						bullets [i].GetComponent<Bullet> ().SetDir (shot_dir [i]);
+						//Bullet b = bullets[i].GetComponent<Bullet>();
+						//b.direction = Vector3.up;
+				}
+				Debug.Log ("Shoot");
+
+
+
+
+				//Instantiate((GameObject)Resources.Load("Bullet/Bullet"), transform.position, Quaternion.identity);
 		}
-		Debug.Log ("Shoot");
 
-
-
-
-		//Instantiate((GameObject)Resources.Load("Bullet/Bullet"), transform.position, Quaternion.identity);
-		}
-	void ShootMore (){
-		int shot = 8;
-		GameObject[] bullets = new GameObject[shot];
-		Vector3[] shot_spawn = new Vector3[shot];
-		Vector3[] shot_dir = new Vector3[shot];
+		void ShootMore ()
+		{
+				int shot = 8;
+				GameObject[] bullets = new GameObject[shot];
+				Vector3[] shot_spawn = new Vector3[shot];
+				Vector3[] shot_dir = new Vector3[shot];
 		
 		
-		shot_spawn [0] = new Vector3 (transform.position.x, transform.position.y + shot_radius, 0.0f);
-		shot_spawn [1] = new Vector3 (transform.position.x + shot_radius, transform.position.y, 0.0f);
-		shot_spawn [2] = new Vector3 (transform.position.x, transform.position.y - shot_radius, 0.0f);
-		shot_spawn [3] = new Vector3 (transform.position.x - shot_radius, transform.position.y, 0.0f);
+				shot_spawn [0] = new Vector3 (transform.position.x, transform.position.y + shot_radius, 0.0f);
+				shot_spawn [1] = new Vector3 (transform.position.x + shot_radius, transform.position.y, 0.0f);
+				shot_spawn [2] = new Vector3 (transform.position.x, transform.position.y - shot_radius, 0.0f);
+				shot_spawn [3] = new Vector3 (transform.position.x - shot_radius, transform.position.y, 0.0f);
 
-		shot_spawn [4] = new Vector3 (transform.position.x + shot_radius, transform.position.y + shot_radius, 0.0f);
-		shot_spawn [5] = new Vector3 (transform.position.x + shot_radius, transform.position.y - shot_radius, 0.0f);
-		shot_spawn [6] = new Vector3 (transform.position.x - shot_radius, transform.position.y - shot_radius, 0.0f);
-		shot_spawn [7] = new Vector3 (transform.position.x - shot_radius, transform.position.y + shot_radius, 0.0f);
+				shot_spawn [4] = new Vector3 (transform.position.x + shot_radius, transform.position.y + shot_radius, 0.0f);
+				shot_spawn [5] = new Vector3 (transform.position.x + shot_radius, transform.position.y - shot_radius, 0.0f);
+				shot_spawn [6] = new Vector3 (transform.position.x - shot_radius, transform.position.y - shot_radius, 0.0f);
+				shot_spawn [7] = new Vector3 (transform.position.x - shot_radius, transform.position.y + shot_radius, 0.0f);
 		
-		shot_dir [0] = Vector3.up;
-		shot_dir [1] = Vector3.right;
-		shot_dir [2] = -Vector3.up;
-		shot_dir [3] = -Vector3.right;
+				shot_dir [0] = Vector3.up;
+				shot_dir [1] = Vector3.right;
+				shot_dir [2] = -Vector3.up;
+				shot_dir [3] = -Vector3.right;
 
-		shot_dir [4] = new Vector3(1.0f,1.0f,0.0f);
-		shot_dir [5] =  new Vector3(1.0f,-1.0f,0.0f);
-		shot_dir [6] =  new Vector3(-1.0f,-1.0f,0.0f);
-		shot_dir [7] =  new Vector3(-1.0f,1.0f,0.0f);
-		// b.direction = Vector3.up;
-		//Instantiate ((GameObject)b, shot_spawn [0], Quaternion.identity) as GameObject;
+				shot_dir [4] = new Vector3 (1.0f, 1.0f, 0.0f);
+				shot_dir [5] = new Vector3 (1.0f, -1.0f, 0.0f);
+				shot_dir [6] = new Vector3 (-1.0f, -1.0f, 0.0f);
+				shot_dir [7] = new Vector3 (-1.0f, 1.0f, 0.0f);
+				// b.direction = Vector3.up;
+				//Instantiate ((GameObject)b, shot_spawn [0], Quaternion.identity) as GameObject;
 		
 		
-		for (int i = 0; i < shot; i++) {
+				for (int i = 0; i < shot; i++) {
 			
-			bullets[i] = Instantiate((GameObject)Resources.Load("Bullet/BulletPrefab"), shot_spawn[i], Quaternion.identity) as GameObject;
+						bullets [i] = Instantiate ((GameObject)Resources.Load ("Bullet/BulletPrefab"), shot_spawn [i], Quaternion.identity) as GameObject;
 			
-			bullets[i].GetComponent<Bullet>().SetDir(shot_dir[i]);
-			//Bullet b = bullets[i].GetComponent<Bullet>();
-			//b.direction = Vector3.up;
+						bullets [i].GetComponent<Bullet> ().SetDir (shot_dir [i]);
+						//Bullet b = bullets[i].GetComponent<Bullet>();
+						//b.direction = Vector3.up;
+				}
+				Debug.Log ("Shoot");
+
+
 		}
-		Debug.Log ("Shoot");
-
-
-	}
 }

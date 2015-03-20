@@ -6,6 +6,7 @@ public class LevelLogic: MonoBehaviour {
 
 	private TileGrid levelManager;
 	private EnemyLoader enemyLoader;
+	private PlayerManager playerManager;
 
 	private Tile[,] levelMap;
 
@@ -16,7 +17,7 @@ public class LevelLogic: MonoBehaviour {
 	public string Axiom = "AAAB";
 
 	void Awake(){
-		player_spawn = GameObject.Find ("PlayerSpawn");
+		//player_spawn = GameObject.Find ("PlayerSpawn");
 		//player = (GameObject)Instantiate((GameObject)Resources.Load("Player/Player"), player_spawn.transform.position, Quaternion.identity);
 	}
 
@@ -24,12 +25,17 @@ public class LevelLogic: MonoBehaviour {
 	void Start () {
 		levelManager = GameObject.Find ("LevelLogic").GetComponent<TileGrid> ();
 		enemyLoader = GameObject.Find ("LevelLogic").GetComponent<EnemyLoader> ();
+		playerManager  = GameObject.Find ("LevelLogic").GetComponent<PlayerManager> ();
+
+
+
 
 		levelManager.InitGenValues (Axiom);
 		levelManager.InitLevelMap ();
 		levelManager.DrawLevelMap ();
 		levelMap = levelManager.GetLevelMap();
 		enemyLoader.LoadMap (levelMap);
+		playerManager.LoadMap (levelMap);
 	}
 
 
@@ -49,6 +55,10 @@ public class LevelLogic: MonoBehaviour {
 			levelManager.UpdateLevelMap();	
 			levelManager.DrawLevelMap();
 		
+		}
+		if(Input.GetKeyDown(KeyCode.P)){
+			playerManager.LoadPlayerSpawn();
+			playerManager.LoadEndPoint();
 		}
 			// spawn
 	}
