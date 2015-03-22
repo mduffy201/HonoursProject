@@ -48,21 +48,21 @@ public class PlayerMovement2D : MonoBehaviour
 
 		private void FixedUpdate ()
 		{
-				Debug.Log ("FIXED UPDATE");
+		if (Input.GetKeyDown (KeyCode.Z)) {
+
+			//whatIsGround = LayerMask.GetMask("Platform");
+		}
+				//Debug.Log ("FIXED UPDATE");
 				CastRays ();
+				CheckFallDeath ();
 				CheckHorizontalMovement ();
 				//Move ();
 			
 				//Debug.Log ("Pre: " + transform.position.ToString ());
 				// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
-
-
-
-				
-				
 				grounded = Physics2D.OverlapCircle (groundCheck.position, groundedRadius, whatIsGround);
 				//Debug.Log ("Grounded?: " + grounded.ToString ());
-				//Is Grounded? RAYCAST OR OVERLAPS
+				
 				
 
 				if (grounded) {
@@ -72,11 +72,7 @@ public class PlayerMovement2D : MonoBehaviour
 
 				} else {
 						y_velocity -= gravity;
-						/*if (y_velocity > -terminal_velocity) {
-								y_velocity -= gravity;
-						} else {
-								y_velocity = -terminal_velocity;
-						}*/
+					
 						if (transform.position.y > 50.0f) {
 								y_velocity = 0.0f;
 						}
@@ -104,9 +100,15 @@ public class PlayerMovement2D : MonoBehaviour
 
 		}
 
+	private void CheckFallDeath(){
+		if (transform.position.y < -5) {
+			Die ();		
+		}
+	
+	}
 		private void CastRays ()
 		{
-				RaycastHit2D[] hitInfo = new RaycastHit2D[2];
+				RaycastHit2D[] hitInfo = new RaycastHit2D[3];
 				//Debug.Log ("CAST RAYS");
 				RaycastHit2D hit = new RaycastHit2D ();
 				for (int i = 0; i < hitInfo.Length; i++) {
@@ -117,13 +119,15 @@ public class PlayerMovement2D : MonoBehaviour
 								hit = Physics2D.Raycast (transform.position, Vector2.right, 0.5f, whatIsGround);
 								//Debug.Log ("RIGHT RAY: " + hit.collider.name);				
 								if (hit.collider == null) {
-										//Debug.Log ("RIGHT RAY HIT NULL");
+										Debug.Log ("RIGHT RAY HIT NULL");
 										wall_right = false;
 								} else if (hit.collider.tag == "Enemy") {
 										Debug.Log ("Enemy Hit");
 										Die ();
-								} else if (hit.collider.tag == "Platform") {
-										//Debug.Log ("RIGHT RAY HIT: " + hit.collider.tag.ToString ());
+								} else if (hit.collider.tag == "Platform" ) {
+										Debug.Log ("RIGHT RAY HIT: " + hit.collider.tag.ToString () +   " " + hit.collider.transform.position.ToString() +
+					           " " );
+
 										velocity = 0;
 										wall_right = true;
 								} 
@@ -145,6 +149,24 @@ public class PlayerMovement2D : MonoBehaviour
 					
 								}
 						}
+			//Check Ceiling
+			if(i ==2){
+				hit = Physics2D.Raycast (transform.position, Vector2.up, 0.5f, whatIsGround);
+				//Debug.Log ("LEFT RAY: " + hit.collider.name);	
+				if (hit.collider == null) {
+					//Debug.Log ("LEFT RAY HIT NULL");
+					//wall_left = false;
+				} else if (hit.collider.tag == "Enemy") {
+					Debug.Log ("Enemy Hit");
+					Die ();
+				} else if (hit.collider.tag == "Platform") {
+					Debug.Log ("Ceiling Hit");
+					y_velocity = 0;
+					//wall_left = true;
+					
+				}
+
+			}
 						
 				}
 	

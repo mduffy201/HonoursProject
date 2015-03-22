@@ -31,7 +31,7 @@ namespace UnitySampleAssets._2D
         // Update is called once per frame
         private void Update()
         {
-			Debug.Log ("Camera Target: " + target.ToString ());
+//			Debug.Log ("Camera Target: " + target.ToString ());
 			if (target == null) {
 				//Debug.Log("No Taget Found");
 

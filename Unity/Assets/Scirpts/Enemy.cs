@@ -9,7 +9,7 @@ public class Enemy : MonoBehaviour
 
 
 		//walker
-		private float maxSpeed = 5f;
+		private float maxSpeed = 3f;
 		float move = -1.0f;
 		//jumper
 		[SerializeField]
@@ -103,7 +103,7 @@ public class Enemy : MonoBehaviour
 
 
 								
-								if (hit.collider == null) {
+				if (hit.collider == null ) {
 							
 										move = 1.0f;
 										moveDirection = MoveDirection.Right;
@@ -118,14 +118,14 @@ public class Enemy : MonoBehaviour
 								RaycastHit2D hit = Physics2D.Raycast (edgeCheckRight.position, -Vector2.up, 2.0f);
 								collider2D.enabled = true;
 			
-								if (hit.collider == null) {
+				if (hit.collider == null) {
 
 										move = -1.0f;
 										moveDirection = MoveDirection.Left;
 				
-				}else {
-					//Debug.Log ("ENEMY RIGHT SENSE: " + hit.collider.name.ToString ());
-				}
+								} else {
+										//Debug.Log ("ENEMY RIGHT SENSE: " + hit.collider.name.ToString ());
+								}
 						}
 		
 
@@ -135,6 +135,10 @@ public class Enemy : MonoBehaviour
 				if (enemyType == EnemyType.Jumper) {
 			
 						grounded = Physics2D.OverlapCircle (groundCheck.position, groundedRadius, whatIsGround);
+				}
+
+				if (transform.position.y < -5.0f) {
+						Destroy (gameObject);
 				}
 		}
 		// Update is called once per frame

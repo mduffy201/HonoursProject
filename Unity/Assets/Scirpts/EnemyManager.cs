@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyLoader : MonoBehaviour
+public class EnemyManager : MonoBehaviour
 {
 
 		//Get spawner game object
@@ -10,12 +10,14 @@ public class EnemyLoader : MonoBehaviour
 		public GameObject enemy_spawn;
 		private GameObject enemySpawnPoint;
 		private Tile[,] levelMap;
-	
+		public float start_range = 10.0f;
+	public float spawn_inverse_frequency = 5.0f;
+
 		void Awake ()
 		{
-				Debug.Log ("Enemy loader awake");
+				//Debug.Log ("Enemy loader awake");
 				enemy_spawn = (GameObject)Resources.Load ("Enemy/EnemySpawn");
-				//enemy = (GameObject)Instantiate((GameObject)Resources.Load("Enemy/Enemy"), enemy_spawn.transform.position, Quaternion.identity);
+				
 		}
 
 		// Use this for initialization
@@ -48,6 +50,7 @@ public class EnemyLoader : MonoBehaviour
 
 		private void LoadSpawnPoints ()
 		{
+				float frequency_counter = spawn_inverse_frequency;
 
 				int level_length = levelMap.GetLength (0);
 				int level_height = levelMap.GetLength (1);
@@ -55,7 +58,14 @@ public class EnemyLoader : MonoBehaviour
 				for (int i = 0; i < level_length; i++) {
 						for (int j = 0; j< level_height; j++) {
 								if (levelMap [i, j].isEnemySpawn ()) {
-										enemySpawnPoint = (GameObject)Instantiate (enemy_spawn, new Vector3 (levelMap [i, j].tilePos.x, levelMap [i, j].tilePos.y, 0.0f), Quaternion.identity);
+							
+										if (i > start_range && frequency_counter >= spawn_inverse_frequency) {		
+												enemySpawnPoint = (GameObject)Instantiate (enemy_spawn, new Vector3 (levelMap [i, j].tilePos.x, levelMap [i, j].tilePos.y, 0.0f), Quaternion.identity);
+						frequency_counter = 0;
+					}			
+					else{
+						frequency_counter++;
+					}
 								}
 						}
 		

@@ -39,14 +39,17 @@ public class Tile
 
 		// A variable that will hold the current position of a tile
 		public Vector2 tilePos;
-	public int level_length;
-	public int level_height;
+		public Vector2 placeInArray;
+
+
+		public int level_length;
+		public int level_height;
 		//Can an enemy spawn on this tile?
 		private bool enemySpawn;
 		//Can the Player spawn on this tile
-	private bool playerSpawn;
-	//Can level end spawn here
-	private bool endPoint;
+		private bool playerSpawn;
+		//Can level end spawn here
+		private bool endPoint;
 		private bool atEdge;
 		// Basic Empty constructor that sets the default type to null so that they will not be created
 		public Tile ()
@@ -61,20 +64,23 @@ public class Tile
 				endPoint = false;
 				level_length = 0;
 				level_height = 0;
+		placeInArray = new Vector2 (0, 0);
 		}
 
 		public bool isEnemySpawn ()
 		{
 				return enemySpawn;
 		}
-	public bool isPlayerSpawn ()
-	{
-		return playerSpawn;
-	}
-	public bool isEndSpawn ()
-	{
-		return endPoint;
-	}
+
+		public bool isPlayerSpawn ()
+		{
+				return playerSpawn;
+		}
+
+		public bool isEndSpawn ()
+		{
+				return endPoint;
+		}
 
 		public void SetNeighbours (Tile tileDown, Tile tileLeft, Tile tileUp, Tile tileRight,
 	                          Tile tileDownLeft, Tile tileUpLeft, Tile tileUpRight, Tile tileDownRight)
@@ -127,18 +133,18 @@ public class Tile
 		public void UpdateTile ()
 		{
 				
-				RuleTwo ();
+				//RuleTwo ();
 				//RuleThree ();
 				//RuleFour ();
 				if (!atEdge) {
 						EnemySpawnRule ();
 				}
-		if (this.tilePos.x == 0) {
-			PlayerSpawnRule();		
-		}
-		if (this.tilePos.x == level_length-1 ) {
-			EndSpawnRule();		
-		}
+				if (this.tilePos.x == 0) {
+						PlayerSpawnRule ();		
+				}
+				if (this.tilePos.x == level_length - 1) {
+						EndSpawnRule ();		
+				}
 				SetSprite ();
 		}
 
@@ -219,18 +225,22 @@ public class Tile
 						}
 				} 
 		}
-	private void PlayerSpawnRule(){
-		if (this.state == 0) {
-			if(tile_neighbours[0].state ==1){
-				playerSpawn = true;
-			}
+
+		private void PlayerSpawnRule ()
+		{
+				if (this.state == 0) {
+						if (tile_neighbours [0].state == 1) {
+								playerSpawn = true;
+						}
+				}
 		}
-	}
-	private void EndSpawnRule(){
-		if (this.state == 0) {
-			if(tile_neighbours[0].state ==1){
-				endPoint = true;
-			}
+
+		private void EndSpawnRule ()
+		{
+				if (this.state == 0) {
+						if (tile_neighbours [0].state == 1) {
+								endPoint = true;
+						}
+				}
 		}
-	}
 }

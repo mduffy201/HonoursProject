@@ -10,6 +10,11 @@ public class TileObject : MonoBehaviour {
 	public int xpos;
 	public int ypos;
 
+	//Possition in array
+//	public int xpos;
+	//public int ypos;
+
+
 	//
 	public bool sprite_set = false;
 	private SpriteRenderer spriteRenderer;
@@ -25,7 +30,7 @@ public class TileObject : MonoBehaviour {
 	void Update () {
 	
 		if (sprite_set == false) {
-			//Debug.Log("Tile Check: " + Tile.TileType.);
+			//Debug.Log("Tile Check/sprite set: x-" + xpos + " y-" + ypos);
 			switch(tile.tileType)
 			{
 			case Tile.TileType.Platform:
@@ -37,11 +42,16 @@ public class TileObject : MonoBehaviour {
 				 	spriteRenderer.sprite = Resources.Load<Sprite> ("Tiles/grassMid");
 				}
 				sprite_set = true;
+				//boxCollider.enabled = true;
 				break;
 			case Tile.TileType.Sky:
+				//gameObject.layer = 0;
 				spriteRenderer.sprite = Resources.Load<Sprite> ("Tiles/Sky");
 				sprite_set = true;
-				boxCollider.enabled = false;
+				//gameObject.tag = "none";
+				//gameObject.collider.transform.localScale = Vector3.zero;
+				//gameObject.layer = LayerMask.GetMask("Default");
+				boxCollider.enabled = true;
 				break;
 			case Tile.TileType.Start:
 				spriteRenderer.sprite = Resources.Load<Sprite> ("Tiles/Start");
@@ -60,8 +70,8 @@ public class TileObject : MonoBehaviour {
 	public void SetTile(Tile tileIn){
 
 		tile = tileIn;
-		xpos = (int)tileIn.tilePos.x;
-		ypos = (int)tileIn.tilePos.y;
+		xpos = (int)tileIn.placeInArray.x;
+		ypos = (int)tileIn.placeInArray.y;
 	//	sprite_set = false;
 	}
 }

@@ -5,7 +5,7 @@ public class LevelLogic: MonoBehaviour {
 
 
 	private TileGrid levelManager;
-	private EnemyLoader enemyLoader;
+	private EnemyManager enemyLoader;
 	private PlayerManager playerManager;
 
 	private Tile[,] levelMap;
@@ -15,30 +15,45 @@ public class LevelLogic: MonoBehaviour {
 
 	//Generation variables
 	public string Axiom = "AAAB";
+	int gap_number = 10;
+	int gap_average_length = 3;
 
-	void Awake(){
-		//player_spawn = GameObject.Find ("PlayerSpawn");
-		//player = (GameObject)Instantiate((GameObject)Resources.Load("Player/Player"), player_spawn.transform.position, Quaternion.identity);
-	}
+	//int platform_number
 
 	// Use this for initialization
 	void Start () {
 		levelManager = GameObject.Find ("LevelLogic").GetComponent<TileGrid> ();
-		enemyLoader = GameObject.Find ("LevelLogic").GetComponent<EnemyLoader> ();
+		enemyLoader = GameObject.Find ("LevelLogic").GetComponent<EnemyManager> ();
 		playerManager  = GameObject.Find ("LevelLogic").GetComponent<PlayerManager> ();
 
 
 
+		//Send level parameters for generation
+		levelManager.InitGenValues (Axiom, gap_number, gap_average_length);
 
-		levelManager.InitGenValues (Axiom);
+		//Form level
 		levelManager.InitLevelMap ();
+
+		//Draw level
 		levelManager.DrawLevelMap ();
+
+		//Get level map tile array
 		levelMap = levelManager.GetLevelMap();
+
+
+
 		enemyLoader.LoadMap (levelMap);
 		playerManager.LoadMap (levelMap);
+
+		levelManager.UpdateLevelMap();	
+		levelManager.DrawLevelMap();
+		levelManager.UpdateGaps();
+		levelManager.UpdatePlatforms();
+		playerManager.LoadPlayerSpawn();
+		playerManager.LoadEndPoint();
 	}
 
-
+	//Player must be loaded last for raycasting to work
 
 
 
@@ -59,6 +74,11 @@ public class LevelLogic: MonoBehaviour {
 		if(Input.GetKeyDown(KeyCode.P)){
 			playerManager.LoadPlayerSpawn();
 			playerManager.LoadEndPoint();
+		}
+		if (Input.GetKeyDown (KeyCode.A)) {
+			//levelManager.UpdateGaps();
+			levelManager.UpdatePlatforms();
+		
 		}
 			// spawn
 	}

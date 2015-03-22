@@ -9,7 +9,7 @@ public class PlayerManager : MonoBehaviour {
 	private GameObject playerSpawnPoint;
 	private GameObject endTriggerPoint;
 	void Awake(){
-		Debug.Log ("Player Manager Awake");
+		//Debug.Log ("Player Manager Awake");
 		player_spawn = (GameObject)Resources.Load ("Player/PlayerSpawn");
 		end_trigger = (GameObject)Resources.Load ("Triggers/EndTrigger");
 	}
