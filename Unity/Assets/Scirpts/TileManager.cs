@@ -3,7 +3,7 @@ using System.Collections;
 
 //using System;
 
-public class TileGrid : MonoBehaviour
+public class TileManager : MonoBehaviour
 {
 		//Input for generation
 		[SerializeField]
@@ -50,6 +50,8 @@ public class TileGrid : MonoBehaviour
 				//gapManager.findAverage ();
 		
 				gapManager.RemoveSingleSpaceGaps ();
+				gapManager.DrillUp ();
+
 				full_level = gapManager.GetUpdatedMap ();
 				DrawFullMap ();
 				//gapManager.DebugGaps ();

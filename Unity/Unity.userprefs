@@ -1,14 +1,8 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scirpts\LevelLogic.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scirpts\PlayerMovement2D.cs">
     <Files>
-      <File FileName="Assets\Scirpts\PlatformManager.cs" Line="35" Column="7" />
-      <File FileName="Assets\Scirpts\GapManager.cs" Line="115" Column="56" />
-      <File FileName="Assets\Scirpts\LevelLogic.cs" Line="56" Column="53" />
-      <File FileName="Assets\Scirpts\TileGrid.cs" Line="67" Column="51" />
-      <File FileName="Assets\Scirpts\PlayerMovement2D.cs" Line="129" Column="21" />
-      <File FileName="Assets\Scirpts\TileObject.cs" Line="26" Column="48" />
-      <File FileName="Assets\Scirpts\Tile.cs" Line="67" Column="37" />
+      <File FileName="Assets\Scirpts\PlayerMovement2D.cs" Line="148" Column="86" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

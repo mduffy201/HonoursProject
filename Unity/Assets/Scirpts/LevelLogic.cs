@@ -4,8 +4,8 @@ using System.Collections;
 public class LevelLogic: MonoBehaviour {
 
 
-	private TileGrid levelManager;
-	private EnemyManager enemyLoader;
+	private TileManager levelManager;
+	private EnemyManager enemyManager;
 	private PlayerManager playerManager;
 
 	private Tile[,] levelMap;
@@ -22,8 +22,8 @@ public class LevelLogic: MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		levelManager = GameObject.Find ("LevelLogic").GetComponent<TileGrid> ();
-		enemyLoader = GameObject.Find ("LevelLogic").GetComponent<EnemyManager> ();
+		levelManager = GameObject.Find ("LevelLogic").GetComponent<TileManager> ();
+		enemyManager = GameObject.Find ("LevelLogic").GetComponent<EnemyManager> ();
 		playerManager  = GameObject.Find ("LevelLogic").GetComponent<PlayerManager> ();
 
 
@@ -42,7 +42,7 @@ public class LevelLogic: MonoBehaviour {
 
 
 
-		enemyLoader.LoadMap (levelMap);
+		enemyManager.LoadMap (levelMap);
 		playerManager.LoadMap (levelMap);
 
 		levelManager.UpdateLevelMap();	
@@ -64,7 +64,7 @@ public class LevelLogic: MonoBehaviour {
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.E)) {
 						//find spawn tiles
-			enemyLoader.LoadEnemySpawns();		
+			enemyManager.LoadEnemySpawns();		
 		}
 		if (Input.GetKeyDown (KeyCode.G)) {
 			levelManager.UpdateLevelMap();	

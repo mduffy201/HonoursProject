@@ -78,7 +78,7 @@
      <Compile Include="Assets\Scirpts\PlayerMovement2D.cs" />
      <Compile Include="Assets\Scirpts\PlayerSpawnScript.cs" />
      <Compile Include="Assets\Scirpts\Tile.cs" />
-     <Compile Include="Assets\Scirpts\TileGrid.cs" />
+     <Compile Include="Assets\Scirpts\TileManager.cs" />
      <Compile Include="Assets\Scirpts\TileObject.cs" />
      <Compile Include="Assets\Scirpts\TitleContols.cs" />
      <None Include="Assets\SampleAssets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />

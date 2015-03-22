@@ -162,7 +162,22 @@ public class GapManager
 				}
 	
 		}
-
+	public void DrillUp(){
+		//Debug.Log ("IN drill up");
+		int gap_no = 0;
+		foreach (Gap g in gaps) {
+			gap_no ++;
+		//	Debug.Log ("IN drill foreach");
+			for(int i = g.x_start; i < g.x_start + g.length; i++ ){
+			//	Debug.Log ("IN drill up loop i: " + i.ToString());
+				levelMap[i, 1].state = 0;
+				levelMap[i, 2].state = 0;
+			}		
+		
+		}
+	
+	
+	}
 		public void UpdateMap ()
 		{
 
