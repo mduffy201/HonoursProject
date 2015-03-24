@@ -48,10 +48,11 @@ public class TileObject : MonoBehaviour {
 				//gameObject.layer = 0;
 				spriteRenderer.sprite = Resources.Load<Sprite> ("Tiles/Sky");
 				sprite_set = true;
+			
 				//gameObject.tag = "none";
 				//gameObject.collider.transform.localScale = Vector3.zero;
 				//gameObject.layer = LayerMask.GetMask("Default");
-				boxCollider.enabled = true;
+				boxCollider.enabled = false;
 				break;
 			case Tile.TileType.Start:
 				spriteRenderer.sprite = Resources.Load<Sprite> ("Tiles/Start");

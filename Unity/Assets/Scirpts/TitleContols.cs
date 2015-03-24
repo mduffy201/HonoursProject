@@ -4,16 +4,25 @@ using System.Collections;
 
 public class TitleContols : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-	
+	//public GameObject canvas;
+
+	private UnityEngine.UI.InputField inputField;
+	private int toolbarInt = 0;
+	private string[] toolbarStrings = {"EASY","NORMAL","HARD"};
+
+
+	public string username;
+
+
+	void OnGUI() {
+
+		toolbarInt = GUI.Toolbar (new Rect(Screen.width/2-170, Screen.height/2-50, 250, 50), toolbarInt, toolbarStrings);
+
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (Input.GetKeyDown(KeyCode.Space)){
-			Debug.Log("Space Down");
-			Application.LoadLevel("Level");
-		}
+	public void StartGame(){
+		PlayerPrefs.SetString("name",username);
+		PlayerPrefs.SetInt("difficulty", toolbarInt);
+		Debug.Log("Space Down");
+		Application.LoadLevel("Level");
 	}
 }

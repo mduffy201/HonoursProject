@@ -40,8 +40,6 @@ public class Tile
 		// A variable that will hold the current position of a tile
 		public Vector2 tilePos;
 		public Vector2 placeInArray;
-
-
 		public int level_length;
 		public int level_height;
 		//Can an enemy spawn on this tile?
@@ -64,7 +62,7 @@ public class Tile
 				endPoint = false;
 				level_length = 0;
 				level_height = 0;
-		placeInArray = new Vector2 (0, 0);
+				placeInArray = new Vector2 (0, 0);
 		}
 
 		public bool isEnemySpawn ()
@@ -132,17 +130,15 @@ public class Tile
 
 		public void UpdateTile ()
 		{
-				
-				//RuleTwo ();
-				//RuleThree ();
-				//RuleFour ();
 				if (!atEdge) {
 						EnemySpawnRule ();
 				}
+			
 				if (this.tilePos.x == 0) {
 						PlayerSpawnRule ();		
 				}
-				if (this.tilePos.x == level_length - 1) {
+
+				if (this.placeInArray.x == level_length - 1) {
 						EndSpawnRule ();		
 				}
 				SetSprite ();
@@ -208,9 +204,9 @@ public class Tile
 				}
 		}
 
+		//If tile is surrounded by only 3 alive tiles (all below) make enemy spawn point possible
 		private void EnemySpawnRule ()
 		{
-	
 				if (this.state == 0) {
 						if (tile_neighbours [0].state == 1 &&
 								tile_neighbours [4].state == 1 &&

@@ -17,6 +17,7 @@ public class GapManager
 
 		//Total number of level gaps
 		public int totalGaps = 0;
+		public int max_length = 5;
 
 		//Gap struct
 		private struct Gap
@@ -31,17 +32,18 @@ public class GapManager
 		public GapManager ()
 		{
 				gaps = new List<Gap> ();
-//				Debug.Log ("HELLO IN GAP MANAGER");
 		}
 
 		public void LoadMap (Tile[,] levelIn)
 		{
 				levelMap = levelIn;
+				RegisterGaps ();
 		}
-	public Tile[,] GetUpdatedMap ()
-	{
-		return levelMap;
-	}
+
+		public Tile[,] GetUpdatedMap ()
+		{
+				return levelMap;
+		}
 
 		public int GetTotalGaps ()
 		{
@@ -131,25 +133,46 @@ public class GapManager
 
 				longestGap = tempGap;
 
-				Debug.Log ("Longest Gap: x-" + longestGap.x_start.ToString () +
-						" Length-" + longestGap.length.ToString ());
+				/*Debug.Log ("Longest Gap: x-" + longestGap.x_start.ToString () +
+						" Length-" + longestGap.length.ToString ());*/
 
 				levelMap [(longestGap.x_start + longestGap.length) - 1, 0].state = 1;
 	
 		}
 
-	public void RemoveSingleSpaceGaps(){
-		//Gap tempGap;
-		foreach (Gap g in gaps) {
-			//if (g.length > tempGap.length) {
-			//	tempGap = g;
-			//}
-			if(g.length == 1){
-				levelMap[g.x_start, 0].state = 1;
-			}
+		public void  ReduceToMax ()
+		{
+				//Debug.Log ("In reduce to max");
+				foreach (Gap g in gaps) {
+						//Debug.Log ("Gap length: " + g.length.ToString ());
+						if (g.length > max_length) {
+								int over = g.length - max_length;
+								//Debug.Log ("TILE " + g.x_start.ToString () + " OVER BY: " + over.ToString ());
+								for (int i = 0; i < over; i++) {
+										levelMap [g.x_start + g.length - (1 + i), 0].state = 1;
+								}
+
+
+						
+						}
+				}
+
 		}
+
+		public void RemoveSingleSpaceGaps ()
+		{
+				//Gap tempGap;
+				foreach (Gap g in gaps) {
+						//if (g.length > tempGap.length) {
+						//	tempGap = g;
+						//}
+						if (g.length == 1) {
+								levelMap [g.x_start, 0].state = 1;
+						}
+				}
 	
-	}
+		}
+
 		public void DebugGaps ()
 		{
 
@@ -162,22 +185,25 @@ public class GapManager
 				}
 	
 		}
-	public void DrillUp(){
-		//Debug.Log ("IN drill up");
-		int gap_no = 0;
-		foreach (Gap g in gaps) {
-			gap_no ++;
-		//	Debug.Log ("IN drill foreach");
-			for(int i = g.x_start; i < g.x_start + g.length; i++ ){
-			//	Debug.Log ("IN drill up loop i: " + i.ToString());
-				levelMap[i, 1].state = 0;
-				levelMap[i, 2].state = 0;
-			}		
+
+		public void DrillUp ()
+		{
+				//Debug.Log ("IN drill up");
+				int gap_no = 0;
+				foreach (Gap g in gaps) {
+						gap_no ++;
+						//	Debug.Log ("IN drill foreach");
+						for (int i = g.x_start; i < g.x_start + g.length; i++) {
+								//	Debug.Log ("IN drill up loop i: " + i.ToString());
+								levelMap [i, 1].state = 0;
+								levelMap [i, 2].state = 0;
+						}		
 		
+				}
+	
+	
 		}
-	
-	
-	}
+
 		public void UpdateMap ()
 		{
 

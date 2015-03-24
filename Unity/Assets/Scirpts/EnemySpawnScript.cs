@@ -4,11 +4,11 @@ using System.Collections;
 public class EnemySpawnScript : MonoBehaviour {
 
 //Attached to enemy spawn object
-int number;
-int cooldown;
+public int numberOf;
+public int cooldown;
 //types
 int power;
-int speed;
+public float speed;
 	
 	//public GameObject enemy_spawn;
 	public GameObject enemy;
@@ -22,8 +22,10 @@ int speed;
 	}
 
 	private void Spawn(){
+		Debug.Log ("FOUND SPEED spawner " + speed.ToString ());
 		enemy = (GameObject)Instantiate((GameObject)Resources.Load("Enemy/Enemy"), gameObject.transform.position, Quaternion.identity);
 		enemy.GetComponent<Enemy> ().SetType (Enemy.EnemyType.Walker);
+		enemy.GetComponent<Enemy> ().speed = speed;
 		Destroy (gameObject);
 	}
 	

@@ -9,8 +9,8 @@ public class Enemy : MonoBehaviour
 
 
 		//walker
-		private float maxSpeed = 3f;
-		float move = -1.0f;
+		public float speed = 3f;
+		public float move = -1.0f;
 		//jumper
 		[SerializeField]
 		private float
@@ -96,41 +96,110 @@ public class Enemy : MonoBehaviour
 		private void FixedUpdate ()
 		{
 				if (enemyType == EnemyType.Walker) {
-						if (moveDirection == MoveDirection.Left) {
-								collider2D.enabled = false;
-								RaycastHit2D hit = Physics2D.Raycast (edgeCheckLeft.position, -Vector2.up, 2.0f);
-								collider2D.enabled = true;
-
-
-								
-				if (hit.collider == null ) {
-							
-										move = 1.0f;
-										moveDirection = MoveDirection.Right;
-						
-								} else {
-										//Debug.Log ("ENEMY LEFT SENSE: " + hit.collider.name.ToString ());
-								}
-						}
-
-						if (moveDirection == MoveDirection.Right) {
-								collider2D.enabled = false;
-								RaycastHit2D hit = Physics2D.Raycast (edgeCheckRight.position, -Vector2.up, 2.0f);
-								collider2D.enabled = true;
-			
-				if (hit.collider == null) {
-
-										move = -1.0f;
-										moveDirection = MoveDirection.Left;
-				
-								} else {
-										//Debug.Log ("ENEMY RIGHT SENSE: " + hit.collider.name.ToString ());
-								}
-						}
-		
+					
 
 						// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
 						grounded = Physics2D.OverlapCircle (groundCheck.position, groundedRadius, whatIsGround);
+			
+						if (grounded) {
+								rigidbody2D.velocity = new Vector2 (move * speed, rigidbody2D.velocity.y);
+						} else {
+								//Debug.Log ("Not grounded");
+						}
+
+
+
+						if (moveDirection == MoveDirection.Left) {
+								bool edge = false;
+								bool wall = false;
+								RaycastHit2D hit = new RaycastHit2D ();
+								for (int i = 0; i < 2; i++) {
+										if (i == 0) {
+												collider2D.enabled = false;
+												hit = Physics2D.Raycast (edgeCheckLeft.position, -Vector2.up, 0.5f);
+												collider2D.enabled = true;
+						
+												if (hit.collider == null) {
+													
+														edge = true;
+												}
+										}
+										if (i == 1) {
+
+												collider2D.enabled = false;
+												hit = Physics2D.Raycast (edgeCheckLeft.position, -Vector2.right, 0.05f);
+												collider2D.enabled = true;
+												if (hit.collider != null) {
+														if (hit.collider.tag == "Platform") {
+																wall = true;
+																
+														}
+												}
+										}
+
+
+										if (edge || wall) {
+											//	Debug.Log ("SWITCH TO RIGHT");
+												move = 1.0f;
+												moveDirection = MoveDirection.Right;
+												edge = false;
+												wall = false;
+										}
+								}
+
+
+
+						} else if (moveDirection == MoveDirection.Right) {
+								bool edge = false;
+								bool wall = false;
+
+								RaycastHit2D hit = new RaycastHit2D ();
+
+
+								for (int i = 0; i < 2; i++) {
+
+										//Check downwards
+										if (i == 0) {
+
+												collider2D.enabled = false;
+												hit = Physics2D.Raycast (edgeCheckRight.position, -Vector2.up, 0.5f);
+												collider2D.enabled = true;
+						
+												if (hit.collider == null) {
+						
+														edge = true;
+												}
+
+										}
+										//Check to right
+										if (i == 1) {
+												collider2D.enabled = false;
+												hit = Physics2D.Raycast (edgeCheckRight.position, Vector2.right, 0.05f);
+												collider2D.enabled = true;
+												if (hit.collider != null) {
+														if (hit.collider.tag == "Platform") {
+				
+																wall = true;
+														} 
+												}
+
+										}
+
+								}
+								if (edge || wall) {
+										//Debug.Log ("SWITCH TO LEFT");
+										move = -1.0f;
+										moveDirection = MoveDirection.Left;
+										edge = false;
+										wall = false;
+								}
+							
+
+								
+						}
+		
+
+						
 				}
 				if (enemyType == EnemyType.Jumper) {
 			
@@ -144,13 +213,13 @@ public class Enemy : MonoBehaviour
 		// Update is called once per frame
 		void Update ()
 		{
-				if (enemyType == EnemyType.Walker) {
-						// Move the character
-						//transform.position += new Vector3 (maxSpeed, 0.0f, 0.0f);
-						if (grounded) {
+				//	if (enemyType == EnemyType.Walker) {
+				// Move the character
+				//transform.position += new Vector3 (maxSpeed, 0.0f, 0.0f);
+				/*	if (grounded) {
 								rigidbody2D.velocity = new Vector2 (move * maxSpeed, rigidbody2D.velocity.y);
-						}
-				}
+						}*/
+				//}
 				if (enemyType == EnemyType.Jumper) {
 						if (grounded) {
 								jump_timer--;

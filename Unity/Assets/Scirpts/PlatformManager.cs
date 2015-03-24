@@ -120,12 +120,12 @@ public class PlatformManager
 		{
 				//Gap tempGap;
 				foreach (Platform p in platforms) {
-						Debug.Log ("REMOVE SINGLE PLATS");
+						//Debug.Log ("REMOVE SINGLE PLATS");
 						//if (g.length > tempGap.length) {
 						//	tempGap = g;
 						//}
 						if (p.length == 1) {
-								Debug.Log ("REMOVE THIS PLAT");
+								//Debug.Log ("REMOVE THIS PLAT");
 								levelMap [p.x_start, p.y_start].state = 0;
 						}
 				}
