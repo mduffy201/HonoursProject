@@ -8,6 +8,7 @@ public class PlayerManager : MonoBehaviour {
 	private Tile[,] levelMap;
 	private GameObject playerSpawnPoint;
 	private GameObject endTriggerPoint;
+
 	void Awake(){
 		//Debug.Log ("Player Manager Awake");
 		player_spawn = (GameObject)Resources.Load ("Player/PlayerSpawn");
@@ -19,26 +20,32 @@ public class PlayerManager : MonoBehaviour {
 	}
 
 	public void LoadPlayerSpawn(){
+	bool placed = false;
 		int level_length = levelMap.GetLength (0);
 		int level_height = levelMap.GetLength (1);
 		
 		for (int i = 0; i < level_length; i++) {
 			for (int j = 0; j< level_height; j++) {
 				if (levelMap [i, j].isPlayerSpawn ()) {
+					if(!placed){
 					playerSpawnPoint = (GameObject)Instantiate (player_spawn, new Vector3 (levelMap [i, j].tilePos.x, levelMap [i, j].tilePos.y, 0.0f), Quaternion.identity);
+						placed = true;
+					}
 				}
 			}
 			
 		}
 	}
+	bool endPlaced = false;
 	public void LoadEndPoint(){
 		int level_length = levelMap.GetLength (0);
 		int level_height = levelMap.GetLength (1);
 		
 		for (int i = 0; i < level_length; i++) {
 			for (int j = 0; j< level_height; j++) {
-				if (levelMap [i, j].isEndSpawn()) {
+				if (levelMap [i, j].isEndSpawn() && endPlaced == false) {
 					endTriggerPoint = (GameObject)Instantiate (end_trigger, new Vector3 (levelMap [i, j].tilePos.x, levelMap [i, j].tilePos.y, 0.0f), Quaternion.identity);
+					endPlaced = true;
 				}
 			}
 			

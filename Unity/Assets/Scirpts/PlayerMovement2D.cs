@@ -10,8 +10,8 @@ public class PlayerMovement2D : MonoBehaviour
 		[SerializeField]
 		private LayerMask
 				whatIsGround; // A mask determining what is ground to the character
-		[SerializeField]
-		private bool
+		
+		public bool
 				grounded = true; // Whether or not the player is grounded.
 		
 
@@ -32,12 +32,16 @@ public class PlayerMovement2D : MonoBehaviour
 		public float ray_length;
 		public float ray_height;
 		public float jump_timer = 0.2f;
-	public float reduced_air_control = 2.0f;
+		public float reduced_air_control = 2.0f;
+		private Animator anim;
+		private bool keyDown = false;
+
 		private void Awake ()
 		{
 				levelStats = GameObject.Find ("LevelLogic").GetComponent<LevelStats> ();
-				ray_length = GetComponent<Renderer> ().bounds.size.x / 2;
-				ray_height = GetComponent<Renderer> ().bounds.size.y / 2;
+				ray_length = 0.3f; //GetComponent<Renderer> ().bounds.size.x / 2*5;
+				ray_height = 0.56f;// (GetComponent<Renderer> ().bounds.size.y/2)*5;
+				anim = GetComponent<Animator> ();
 		}
 
 		private void FixedUpdate ()
@@ -50,10 +54,24 @@ public class PlayerMovement2D : MonoBehaviour
 				CheckHorizontalMovement ();
 				CheckVerticalMovement ();
 				Move ();
+
+				if (!grounded) {
+						anim.SetBool ("jumping", true);
+						anim.SetBool ("moving", false);
+						anim.SetBool ("idle", false);
+				} else if (grounded && x_velocity != 0) {
+						anim.SetBool ("moving", true);
+						anim.SetBool ("jumping", false);
+						anim.SetBool ("idle", false);
+				} else {
+						anim.SetBool ("idle", true);
+						anim.SetBool ("jumping", false);
+						anim.SetBool ("moving", false);
+				}
 				
 
 		}
-		
+
 		private void CheckVerticalMovement ()
 		{
 
@@ -61,19 +79,18 @@ public class PlayerMovement2D : MonoBehaviour
 						y_velocity = 0;
 				} else {
 						y_velocity -= gravity;
-			
-						/*if (transform.position.y > terminal_velocity) {
-								y_velocity = 0.0f;
-						}*/
 				}
 		
 				if (Input.GetKey (KeyCode.UpArrow)) {
-						if (grounded) {
+						if (grounded && !keyDown) {
+								keyDown = true;
 								y_velocity = jump_force;
-								grounded = false;						
+								//grounded = false;						
 								levelStats.jumps++;
 						}
-				} 
+				} else {
+						keyDown = false;		
+				}
 		}
 
 		private void CheckHorizontalMovement ()
@@ -82,7 +99,9 @@ public class PlayerMovement2D : MonoBehaviour
 
 						if (grounded && !wall_right) {
 								dir = 1.0f;
-
+								if (!facingRight) {
+										Flip ();
+								}
 								if (x_velocity < max_velocity) {
 										x_velocity = x_velocity + acceleration;
 								}
@@ -93,7 +112,7 @@ public class PlayerMovement2D : MonoBehaviour
 								dir = 1.0f;
 				
 								if (x_velocity < max_velocity) {
-					x_velocity = x_velocity + acceleration /  reduced_air_control;
+										x_velocity = x_velocity + acceleration / reduced_air_control;
 								}
 								//moving = true;
 								levelStats.time_moving_right += Time.deltaTime;
@@ -103,7 +122,9 @@ public class PlayerMovement2D : MonoBehaviour
 				
 						if (grounded && !wall_left) {
 								dir = -1.0f;
-
+								if (facingRight) {
+										Flip ();
+								}
 								if (x_velocity < max_velocity) {
 										x_velocity = x_velocity + acceleration;
 								}
@@ -114,7 +135,7 @@ public class PlayerMovement2D : MonoBehaviour
 								dir = -1.0f;
 				
 								if (x_velocity < max_velocity) {
-					x_velocity = x_velocity + acceleration /  reduced_air_control;
+										x_velocity = x_velocity + acceleration / reduced_air_control;
 								}
 								//moving = true;
 								levelStats.time_moving_right += Time.deltaTime;
@@ -151,11 +172,18 @@ public class PlayerMovement2D : MonoBehaviour
 				transform.localScale = theScale;
 		}
 
+		int frame = 0;
+	public	bool groundedR = true;
+	public	bool groundedL = true;
 		private void CastRays ()
 		{
-				RaycastHit2D[] hitInfo = new RaycastHit2D[4];
+				frame++;
+				RaycastHit2D[] hitInfo = new RaycastHit2D[5];
 				float offsetx = x_velocity * Time.deltaTime;
-				float offsety = -y_velocity * Time.deltaTime;
+				float offsety = 0.0f;
+				if (!grounded) {
+						offsety = -y_velocity * Time.deltaTime;
+				}	
 				//Debug.Log ("CAST RAYS");
 				RaycastHit2D hit = new RaycastHit2D ();
 				for (int i = 0; i < hitInfo.Length; i++) {
@@ -166,11 +194,11 @@ public class PlayerMovement2D : MonoBehaviour
 								hit = Physics2D.Raycast (transform.position, Vector2.right, ray_length + offsetx, whatIsGround);
 								//Debug.Log ("RIGHT RAY: " + hit.collider.name);				
 								if (hit.collider == null) {
-										//Debug.Log ("RIGHT RAY HIT NULL");
+//										Debug.Log ("RIGHT RAY HIT NULL");
 										wall_right = false;
 								} else if (hit.collider.tag == "Enemy") {
 										//Debug.Log ("Enemy Hit");
-										Die ();
+										//Die ();
 								} else if (hit.collider.tag == "Platform") {
 										//Debug.Log ("RIGHT RAY HIT: " + hit.collider.tag.ToString () + " " + hit.collider.transform.position.ToString () + " ");
 										if (!wall_right) {
@@ -219,40 +247,77 @@ public class PlayerMovement2D : MonoBehaviour
 										Debug.Log ("Enemy Hit");
 										Die ();
 								} else if (hit.collider.tag == "Platform") {
-										Debug.Log ("Ceiling Hit");
+										//Debug.Log ("Ceiling Hit");
 										y_velocity = 0;
 										//jumping = false;
-										grounded = false;
+										//grounded = false;
 										//wall_left = true;
 					
 								}
 				
 						}
+					
 						//Grounded Check
 						if (i == 3) {
-								hit = Physics2D.Raycast (transform.position, -Vector2.up, ray_height + offsety, whatIsGround);
-								//Debug.Log ("LEFT RAY: " + hit.collider.name);	
-								if (hit.collider == null) {
-										grounded = false;
-										//Debug.Log ("LEFT RAY HIT NULL");
-										//wall_left = false;
-								} else if (hit.collider.tag == "Enemy") {
-										//Debug.Log ("Enemy Hit");
-										//Die ();
-								} else if (hit.collider.tag == "Platform") {
+								//Debug.Log ("GROUND CHECK1: " + frame.ToString() + ", " + offsety.ToString());
+								Vector3 castPosL = new Vector3 (transform.position.x - 0.2f, transform.position.y, 0.0f);
+								hit = Physics2D.Raycast (castPosL, -Vector2.up, ray_height + offsety, whatIsGround);
+								//hit = Physics2D.Raycast (transform.position, -Vector2.up, ray_height + offsety, whatIsGround);
+				
+								if (hit.collider != null) {
+										//Debug.Log ("GROUND CHECK: " + frame.ToString() + ", " + hit.collider.tag);
+								
+							
+										if (hit.collider.tag == "Platform") {
 //										Debug.Log ("Ground Hit");
 					
-										Vector3 newPos = new Vector3 (0.0f, -hit.distance + ray_height, 0.0f);
-										//Debug.Log (newPos.ToString ());
-										transform.Translate (newPos);
-					
-										grounded = true;
-										y_velocity = 0;
-					
-										//wall_left = true;
-					
+												Vector3 newPos = new Vector3 (0.0f, -hit.distance + ray_height, 0.0f);
+												//Debug.Log (newPos.ToString ());
+												transform.Translate (newPos);
+												groundedL = true;
+												//grounded = true;
+												y_velocity = 0;
+
+										} 
+
+								} else if (hit.collider == null) {
+										//Debug.Log ("GROUND CHECK2" + frame.ToString() );
+										groundedL = false;
+										//grounded = false;
 								}
+						}
+						if (i == 4) {
+								//Debug.Log ("GROUND CHECK1: " + frame.ToString() + ", " + offsety.ToString());
+								Vector3 castPosR = new Vector3 (transform.position.x + 0.2f, transform.position.y, 0.0f);
+								hit = Physics2D.Raycast (castPosR, -Vector2.up, ray_height + offsety, whatIsGround);
 				
+								if (hit.collider != null) {
+										//Debug.Log ("GROUND CHECK: " + frame.ToString() + ", " + hit.collider.tag);
+					
+					
+										if (hit.collider.tag == "Platform") {
+												//										Debug.Log ("Ground Hit");
+						
+												Vector3 newPos = new Vector3 (0.0f, -hit.distance + ray_height, 0.0f);
+												//Debug.Log (newPos.ToString ());
+												transform.Translate (newPos);
+						
+												//grounded = true;
+												groundedR = true;
+												y_velocity = 0;
+						
+										} 
+					
+								} else if (hit.collider == null) {
+										//Debug.Log ("GROUND CHECK2" + frame.ToString() );
+										//grounded = false;
+										groundedR = false;
+								}
+						}
+						if (!groundedL && !groundedR) {
+								grounded = false;
+						} else {
+								grounded = true;
 						}
 				}
 		
@@ -261,7 +326,7 @@ public class PlayerMovement2D : MonoBehaviour
 		void OnTriggerEnter2D (Collider2D collider)
 		{
 
-				Debug.Log (collider.name);
+				Debug.Log ("IN TRIGGGER" + collider.name);
 				if (collider.name == "EndTrigger") {
 						Debug.Log ("Level Finish Triggered");
 						Application.LoadLevel ("TitleScreen");
@@ -276,6 +341,17 @@ public class PlayerMovement2D : MonoBehaviour
 						//Application.LoadLevel("TitleScreen");
 			
 				}
+				if (collider.tag == "bullet") {
+						Debug.Log ("SHOT " + collider.name);
+						Kill ();
+				}
+				if (collider.tag == "finish") {
+						Debug.Log ("LEVEL END");
+						levelStats.DisplayLevelEnd ();
+
+						//Kill();
+				}
+
 				/*if (collider.name == "EdgeCheckLeft" || collider.name == "EdgeCheckRight") {
 						Debug.Log ("Player Dead");		
 						Application.LoadLevel (Application.loadedLevelName);
@@ -288,6 +364,13 @@ public class PlayerMovement2D : MonoBehaviour
 						Die ();		
 				}
 		
+		}
+
+		public void Kill ()
+		{
+				//Debug.Log ("Killed!");
+				Die ();
+	
 		}
 
 		private void Die ()

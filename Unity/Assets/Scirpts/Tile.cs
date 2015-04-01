@@ -3,7 +3,9 @@ using System.Collections;
 
 public class Tile
 {
-
+		private int alive = 1;
+		const int dead = 0;
+		public bool isSpriteSet = false;
 		// Create an enum that will contain each possible tile type
 		public enum TileType
 		{
@@ -12,6 +14,19 @@ public class Tile
 				Start,
 				Finish,
 				Null // Null is required for my generation method
+		}
+
+		private enum Direction
+		{
+				Down,
+				Left,
+				Up,
+				Right,
+				Down_Left,
+				Up_Left,
+				Up_Right,
+				Down_Right
+		
 		}
 
 		public enum PlatformPos
@@ -83,18 +98,15 @@ public class Tile
 		public void SetNeighbours (Tile tileDown, Tile tileLeft, Tile tileUp, Tile tileRight,
 	                          Tile tileDownLeft, Tile tileUpLeft, Tile tileUpRight, Tile tileDownRight)
 		{
-				/*if( tileDown == null & tileLeft == null){
-			Debug.Log ("LEFT BOTTOM CONER REACHED!!!");
-		}*/
-				//Debug.Log("ENEMY TILE!!! " + tilePos.x + " " + tilePos.y);
-				tile_neighbours [0] = tileDown; //Down
-				tile_neighbours [1] = tileLeft; //Left
-				tile_neighbours [2] = tileUp; //Up
-				tile_neighbours [3] = tileRight; //Right
-				tile_neighbours [4] = tileDownLeft; //Down-Left
-				tile_neighbours [5] = tileUpLeft; //Up-Left 
-				tile_neighbours [6] = tileUpRight; //Up-Right
-				tile_neighbours [7] = tileDownRight; //Down-Right
+			
+				tile_neighbours [(int)Direction.Down] = tileDown; //Down
+				tile_neighbours [(int)Direction.Left] = tileLeft; //Left
+				tile_neighbours [(int)Direction.Up] = tileUp; //Up
+				tile_neighbours [(int)Direction.Right] = tileRight; //Right
+				tile_neighbours [(int)Direction.Down_Left] = tileDownLeft; //Down-Left
+				tile_neighbours [(int)Direction.Up_Left] = tileUpLeft; //Up-Left 
+				tile_neighbours [(int)Direction.Up_Right] = tileUpRight; //Up-Right
+				tile_neighbours [(int)Direction.Down_Right] = tileDownRight; //Down-Right
 
 				for (int i = 0; i < tile_neighbours.Length; i++) {
 						if (tile_neighbours [i] == null) {
@@ -112,8 +124,11 @@ public class Tile
 		private void SetSprite ()
 		{
 				if (state == 1) {
-						if (tile_neighbours [2] == null || tile_neighbours [2].state == 0) {
+						if (tile_neighbours [(int)Direction.Up] == null || tile_neighbours [(int)Direction.Up].state == 0) {
 								platformPos = PlatformPos.Center;
+						}
+						if (tile_neighbours [(int)Direction.Up].state == alive) {
+								platformPos = PlatformPos.Middle;
 						}
 				}
 	
@@ -132,28 +147,74 @@ public class Tile
 		{
 				if (!atEdge) {
 						EnemySpawnRule ();
-				}
-			
-				if (this.tilePos.x == 0) {
-						PlayerSpawnRule ();		
-				}
+						VerticalRangeRule ();
+						SurroundedRule ();
+						
+						if (this.tilePos.y > 0) {
+								SingleGapRule ();
+						}
 
-				if (this.placeInArray.x == level_length - 1) {
-						EndSpawnRule ();		
+						if (this.tilePos.y == 3) {
+								UpperPlatformExtendSingle ();	
+						} 
+						if (this.tilePos.y == 2) {
+								UpperAccessRule ();
+								//UpperPlatformExtendSingle ();	
+						} 
+
+
+
+						if (this.placeInArray.x == level_length - 1 ||
+								this.placeInArray.x == level_length - 2 ||
+								this.placeInArray.x == level_length - 3) {
+								EndSpawnRule ();		
+						}
 				}
+				
+
+				if (this.tilePos.x == 0 ||
+		    this.tilePos.x == 1 ||
+		    this.tilePos.x == 2 ||
+		    this.tilePos.x == 3) {
+						PlayerSpawnRule ();		
+				} 
+
+
+			
 				SetSprite ();
 		}
 
-		private void RuleOne ()
+		private void VerticalRangeRule ()
+		{
+		
+				if (state == 1) {
+						if (tile_neighbours [(int)Direction.Down].state == alive &&
+								tile_neighbours [(int)Direction.Right].state == alive &&
+								tile_neighbours [(int)Direction.Down_Right].state == alive &&
+			   
+								tile_neighbours [(int)Direction.Up].state == dead &&
+								tile_neighbours [(int)Direction.Left].state == dead &&
+								tile_neighbours [(int)Direction.Up_Left].state == dead &&
+								tile_neighbours [(int)Direction.Up_Right].state == dead &&
+								tile_neighbours [(int)Direction.Down_Left].state == dead) {
+								state = dead;
+						}
+				}
+		
+		}
+
+		private void SurroundedRule ()
 		{
 				//If tile dead and surrounded by alive on above and below rows, make alive
 				if (state == 0) {
-						if (tile_neighbours [5].state == 1 &&
-								tile_neighbours [2].state == 1 &&
-								tile_neighbours [6].state == 1 &&
-								tile_neighbours [4].state == 1 &&
-								tile_neighbours [0].state == 1 &&
-								tile_neighbours [7].state == 1) {
+						if (tile_neighbours [(int)Direction.Down].state == alive &&
+								tile_neighbours [(int)Direction.Up].state == alive &&
+								tile_neighbours [(int)Direction.Left].state == alive &&
+								tile_neighbours [(int)Direction.Right].state == alive &&
+								tile_neighbours [(int)Direction.Down_Left].state == alive &&
+								tile_neighbours [(int)Direction.Down_Right].state == alive &&
+								tile_neighbours [(int)Direction.Up_Left].state == alive &&
+								tile_neighbours [(int)Direction.Up_Right].state == alive) {
 								state = 1;
 						}	
 		
@@ -161,37 +222,67 @@ public class Tile
 				}
 		}
 
-		private void RuleTwo ()
+		private void SingleGapRule ()
 		{
+				//If tile dead and surrounded by alive on above and below rows, make alive
 				if (state == 0) {
-						int alive = 0;
-						for (int i = 0; i < tile_neighbours.Length; i++) {
-								if (tile_neighbours [i] != null) {
-										if (tile_neighbours [i].state == 1) {
-												alive++;
-										}
-								}
-						}
-						if (alive >= 5) {
+						if (tile_neighbours [(int)Direction.Down].state == alive &&
+
+								tile_neighbours [(int)Direction.Left].state == alive &&
+								tile_neighbours [(int)Direction.Right].state == alive &&
+								tile_neighbours [(int)Direction.Down_Left].state == alive &&
+								tile_neighbours [(int)Direction.Down_Right].state == alive) {
 								state = 1;
-						}
-		
+								isSpriteSet = false;
+						}	
+			
+			
 				}
 		}
 
-		private void RuleThree ()
+		private void UpperPlatformExtendSingle ()
 		{
+				if (state == 0) {
+						if (tile_neighbours [(int)Direction.Down].state == dead &&
+			    
+								tile_neighbours [(int)Direction.Left].state == alive &&
+								tile_neighbours [(int)Direction.Right].state == alive &&
+								tile_neighbours [(int)Direction.Down_Left].state == dead &&
+								tile_neighbours [(int)Direction.Down_Right].state == dead) {
+								state = alive;
+								isSpriteSet = false;
+						}	
+		
+				}
 				if (state == 1) {
-						int alive = 0;
-						for (int i = 0; i < tile_neighbours.Length; i++) {
-								if (tile_neighbours [i].state == 1) {
-										alive++;
-								}
-						}
-						if (alive < 1) {
-								state = 0;
-						}
+						if (tile_neighbours [(int)Direction.Down].state == dead &&
+			    
+								tile_neighbours [(int)Direction.Left].state == dead &&
+								tile_neighbours [(int)Direction.Right].state == dead &&
+								tile_neighbours [(int)Direction.Down_Left].state == dead &&
+								tile_neighbours [(int)Direction.Down_Right].state == dead) {
+								state = dead;
+								isSpriteSet = false;
+						}	
 			
+				}
+		}
+
+		private void UpperAccessRule ()
+		{
+				if (state == 0) {
+						if (tile_neighbours [(int)Direction.Down].state == alive &&
+								tile_neighbours [(int)Direction.Up].state == dead &&
+								tile_neighbours [(int)Direction.Left].state == dead &&
+								tile_neighbours [(int)Direction.Right].state == dead &&
+								tile_neighbours [(int)Direction.Down_Left].state == alive &&
+								tile_neighbours [(int)Direction.Down_Right].state == dead &&
+								tile_neighbours [(int)Direction.Up_Left].state == dead &&
+								tile_neighbours [(int)Direction.Up_Right].state == alive) {
+								state = alive;
+								isSpriteSet = false;
+						}	
+					
 				}
 		}
 

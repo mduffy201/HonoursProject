@@ -5,15 +5,14 @@ using System.Collections;
 
 public class LevelManager : MonoBehaviour
 {
+		LevelStats level_stats;
+
 		//Input for generation
+		
+		private string axiom;
+		private int	gap_number;
 		[SerializeField]
-		private string
-				axiom;
-		[SerializeField]
-		private int
-				gap_number;
-		[SerializeField]
-		private int
+		int
 				gap_number_Actual;
 		[SerializeField]
 		private float
@@ -33,56 +32,95 @@ public class LevelManager : MonoBehaviour
 		private int pattern_per_section = 4;
 		private int level_sections = 4;
 		private Tile[,] full_level;
-		private GapManager gapManager;
-		private PlatformManager platformManager;
+		private GapPlatformManager gapPlaformManager;
+		//private PlatformManager platformManager;
 		
+		void Awake ()
+		{
+				
+				level_stats = gameObject.GetComponent<LevelStats> ();
+				//Debug.Log (level_stats.Axiom);
+		
+		}
+
 		public void UpdateGapsAndPlatforms ()
 		{
+				gapPlaformManager.LoadMap (full_level);
 
-				//UpdateGaps ();
-				//UpdatePlatforms ();
-
-		gapManager.LoadMap (full_level);
-
-		gapManager.findAverage ();
+				//gapPlaformManager.findAverage ();
 		
 
-		gapManager.RemoveSingleSpaceGaps ();
-		gapManager.DrillUp ();
-		full_level = gapManager.GetUpdatedMap ();
-		platformManager.LoadMap (full_level);
-		platformManager.RegisterPlatforms ();
-		platformManager.RemoveSingleSpacePlaforms ();
+				gapPlaformManager.RemoveSingleSpaceGaps ();
+				gapPlaformManager.DrillUp ();
 
-		full_level = platformManager.GetUpdatedMap ();
-		gapManager.LoadMap (full_level);
+				full_level = gapPlaformManager.GetUpdatedMap ();
+				gapPlaformManager.LoadMap (full_level);
+				gapPlaformManager.RegisterPlatforms ();
+				gapPlaformManager.RemoveSingleSpacePlaforms ();
 
-		gapManager.ReduceToMax ();
-		full_level = gapManager.GetUpdatedMap ();
+				full_level = gapPlaformManager.GetUpdatedMap ();
+				gapPlaformManager.LoadMap (full_level);
+
+				gapPlaformManager.ReduceToMax ();
+				full_level = gapPlaformManager.GetUpdatedMap ();
 
 
 
-		//plaform_number_Actual = platformManager.GetTotalPlatforms ();
-		//gap_average_length_Actual = gapManager.average;
-		//gap_number_Actual = gapManager.GetTotalGaps ();
+				plaform_number_Actual = gapPlaformManager.GetTotalPlatforms ();
+				gap_average_length_Actual = gapPlaformManager.gap_average;
+				gap_number_Actual = gapPlaformManager.GetTotalGaps ();
+
+				
+				//Reduce number of gaps
+				if (gap_number_Actual > level_stats.gap_number) {
+				
+						gapPlaformManager.ReduceGaps (level_stats.gap_number);
+						full_level = gapPlaformManager.GetUpdatedMap ();
+						plaform_number_Actual = gapPlaformManager.GetTotalPlatforms ();
+						gap_average_length_Actual = gapPlaformManager.gap_average;
+						gap_number_Actual = gapPlaformManager.GetTotalGaps ();
+				}
+
+				//Increase number of gaps
+				if (gap_number_Actual < level_stats.gap_number) {
+						gapPlaformManager.IncreaseGaps (level_stats.gap_number);
+				}
+
+				gap_average_length_Actual = gapPlaformManager.findAverage ();
+				if (gap_average_length_Actual < gap_average_length) {
+						Debug.Log ("incrase average! " + gap_average_length_Actual.ToString () +
+								" < " + gap_average_length.ToString ());
+						while (gap_average_length_Actual < gap_average_length) {
+								Debug.Log ("Inside while");
+								gapPlaformManager.IncreaseAverage ();
+								gap_average_length_Actual = gapPlaformManager.findAverage ();
+						}
+
+				} else if (gap_average_length_Actual > gap_average_length) {
+
+			Debug.Log ("reduce average! " + gap_average_length_Actual.ToString () +
+			           " < " + gap_average_length.ToString ());
+
+						while (gap_average_length_Actual > gap_average_length) {
+								gapPlaformManager.ReduceAverage ();
+								gap_average_length_Actual = gapPlaformManager.findAverage ();
+				
+						}
+				}
+
+				
+				gap_average_length_Actual = gapPlaformManager.findAverage ();
+				full_level = gapPlaformManager.GetUpdatedMap ();
 		}
 
-
-
-		public void UpdateLevelMap ()
-		{
-				UpdateTileMap ();
-		}
-
-		public void DrawLevelMap ()
-		{
-				DrawFullMap ();
-		}
+		
+	
 		//Get current level of tiles
 		public Tile[,] GetLevelMap ()
 		{
 				return full_level;
 		}
+
 		// A method for getting data from a tile at a specific coordinate (isn't necessary, but it looks cleaner this way)
 		public Tile GetTile (int xPos, int yPos)
 		{
@@ -91,18 +129,19 @@ public class LevelManager : MonoBehaviour
 				return full_level [xPos, yPos];
 		}
 
-		public void InitGenValues (string axiomIn, int gapNoIn, int gapAveIn)
+		private void InitGenValues ()
 		{
-				axiom = axiomIn;
-				gap_number = gapNoIn;
-				gap_average_length = gapAveIn;
+				axiom = level_stats.Axiom;
+				gap_number = level_stats.gap_number;
+				gap_average_length = level_stats.gap_average_length;
 		}
 	
 		//Create level
 		public void InitLevelMap ()
 		{
-				gapManager = new GapManager ();
-				platformManager = new PlatformManager ();
+				InitGenValues ();
+				gapPlaformManager = new GapPlatformManager ();
+				//platformManager = new PlatformManager ();
 		
 				//total_patterens = level_sections * pattern_per_section;
 				full_level = new Tile[pattern_horizontal * level_sections * pattern_per_section, pattern_vertical];
@@ -110,10 +149,14 @@ public class LevelManager : MonoBehaviour
 				// Create an empty object with the name "Map" to act as the parent for our tiles 
 				tileParent = new GameObject ();
 				tileParent.name = "Map";
-		
+
+				//	Debug.Log ("ERROR FIND 1");
 				InitFullLevel ();
+				//	Debug.Log ("ERROR FIND 2");
 				CreateLSystemString ();
+				//Debug.Log ("ERROR FIND 3");
 				GeneratePatternsUsingLSyem ();
+				//Debug.Log ("ERROR FIND 4");
 				LoadNeighbours ();
 				//DrawFullMap ();
 		
@@ -142,7 +185,7 @@ public class LevelManager : MonoBehaviour
 				}
 		}
 		//Run update on each tile object in array
-		private void UpdateTileMap ()
+		public void UpdateLevelMap ()
 		{
 				int level_length = full_level.GetLength (0);
 				int level_height = full_level.GetLength (1);
@@ -160,7 +203,7 @@ public class LevelManager : MonoBehaviour
 
 
 		//Draw level map
-		private void DrawFullMap ()
+		public void DrawLevelMap ()
 		{
 
 				// Loop structure is the same as the loops above ^^^
@@ -326,10 +369,13 @@ public class LevelManager : MonoBehaviour
 										result += "AB";
 										break;
 								case 'B':
-										result += "BC";
+										result += "DC";
 										break;
 								case 'C':
-										result += "AA";
+										result += "BA";
+										break;
+								case 'D':
+										result += "CD";
 										break;
 								}
 						}
@@ -342,7 +388,8 @@ public class LevelManager : MonoBehaviour
 		{
 		
 				string patternstring = lSystem;
-		
+
+//				Debug.Log ("ERROR FIND:" + patternstring);
 				for (int i = 0; i < patternstring.Length; i++) {
 			
 						switch (patternstring [i]) {
@@ -355,6 +402,9 @@ public class LevelManager : MonoBehaviour
 								break;
 						case 'C':
 								GenCPattern (i + 1);
+								break;
+						case 'D':
+								GenDPattern (i + 1);
 								break;
 				
 						}
@@ -370,9 +420,11 @@ public class LevelManager : MonoBehaviour
 						int random_value = (int)(Random.value * 10) * i;
 						int tile_state = random_value % 4;
 			
-						//int place = (x_placement - 1) * pattern_horizontal + i;
+						
 						//	Debug.Log(tile_state.ToString());
-						//Debug.Log ("Random value: " + random_value);			
+						//Debug.Log ("Random value: " + random_value);
+						//int tile_state = (int)Random.Range (0.0f, 9.0f);
+						int pos = (x_placement - 1) * pattern_horizontal + i;
 						if (tile_state == 0 || tile_state == 1) {
 								//						Debug.Log ("switched: " + Random.value * 100);
 								full_level [place, j].SwitchState ();
@@ -386,17 +438,18 @@ public class LevelManager : MonoBehaviour
 						for (int j = 0; j < pattern_vertical; j++) {
 				
 								if (j == 0 || j == 1) {
+										
 										int place = (x_placement - 1) * pattern_horizontal + i + j;
-					
 										Random.seed = (int)place;
 										int random_value = (int)(Random.value * 10) * i;
 										int tile_state = random_value % 4;
-					
-					
+
+										//int tile_state = (int)Random.Range (0.0f, 9.0f);
+										int pos = (x_placement - 1) * pattern_horizontal + i;
 										//Debug.Log ("Random value: " + random_value);			
 										if (tile_state == 0 || tile_state == 1) {
 												//						Debug.Log ("switched: " + Random.value * 100);
-												full_level [place, j].SwitchState ();
+												full_level [pos, j].SwitchState ();
 										}
 								}
 						}
@@ -408,18 +461,48 @@ public class LevelManager : MonoBehaviour
 				for (int i = 0; i < pattern_horizontal; i++) {
 						for (int j = 0; j < pattern_vertical; j++) {
 								if (j == 0 || j == 1 || j == 2) {
-										int place = (x_placement - 1) * pattern_horizontal + i + j;
+										
+
+
+										int seed = (x_placement - 1) * pattern_horizontal + i + j;
+										Random.seed = (int)seed;
+										int random_value = (int)(Random.value * 10) * i;
+										int tile_state = random_value % 4;
+
+
+										
+										int pos = (x_placement - 1) * pattern_horizontal + i;
+
+										if (tile_state == 0 || tile_state == 1) {
+											
+												full_level [pos, j].SwitchState ();
+										}
+								}
+						}
+				}
+		}
+
+		private void GenDPattern (int x_placement)
+		{
+//		Debug.Log ("GEN D");
+				for (int i = 0; i < pattern_horizontal; i++) {
+						for (int j = 0; j < pattern_vertical; j++) {
+								if (j == 3 || j == 1) {
 					
-										Random.seed = (int)place;
+					
+					
+										int seed = (x_placement - 1) * pattern_horizontal + i + j;
+										Random.seed = (int)seed;
 										int random_value = (int)(Random.value * 10) * i;
 										int tile_state = random_value % 4;
 					
 					
 					
-										//Debug.Log ("Random value: " + random_value);			
+										int pos = (x_placement - 1) * pattern_horizontal + i;
+					
 										if (tile_state == 0 || tile_state == 1) {
-												//						Debug.Log ("switched: " + Random.value * 100);
-												full_level [place, j].SwitchState ();
+						
+												full_level [pos, j].SwitchState ();
 										}
 								}
 						}

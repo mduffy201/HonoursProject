@@ -9,17 +9,14 @@ public class LevelLogic: MonoBehaviour
 		private EnemyManager enemyManager;
 		private PlayerManager playerManager;
 		private Tile[,] levelMap;
-		public GameObject player_spawn;
-		public GameObject player;
+		//public GameObject player_spawn;
+		//public GameObject player;
 
 		//Generation variables
-		public string Axiom = "AAAB";
-		int gap_number = 10;
-		int gap_average_length = 3;
+		
 		bool isTemporary = true;
 		bool reStart = true;
-		//int platform_number
-
+		
 
 		void Awake ()
 		{
@@ -34,32 +31,28 @@ public class LevelLogic: MonoBehaviour
 		// Use this for initialization
 		void Start ()
 		{
+		Debug.Log ("Level logic start");
 				levelManager = GameObject.Find ("LevelLogic").GetComponent<LevelManager> ();
 				enemyManager = GameObject.Find ("LevelLogic").GetComponent<EnemyManager> ();
 				playerManager = GameObject.Find ("LevelLogic").GetComponent<PlayerManager> ();
 
-
-
-				//Send level parameters for generation
-				levelManager.InitGenValues (Axiom, gap_number, gap_average_length);
-
 				//Form level
 				levelManager.InitLevelMap ();
 
-				//Draw level
+				
 				
 
 				//Update Each Tile in map - includeds asigning values through CA
-				levelManager.UpdateLevelMap ();	
-
-				levelManager.UpdateGapsAndPlatforms ();
-				levelManager.DrawLevelMap ();
 				
 
-
+				levelManager.UpdateGapsAndPlatforms ();
+				levelManager.UpdateLevelMap ();
+				//Draw level
+				levelMap = levelManager.GetLevelMap ();
+				levelManager.DrawLevelMap ();
 
 				//Get level map tile array
-				levelMap = levelManager.GetLevelMap ();
+				//levelMap = levelManager.GetLevelMap ();
 
 
 
@@ -77,16 +70,11 @@ public class LevelLogic: MonoBehaviour
 
 
 
-
-
-
-
-
 		// Update is called once per frame
 		void Update ()
 		{
 				if (GameObject.FindGameObjectWithTag ("Player") == null) {
-						Debug.Log ("restart?");
+					//	Debug.Log ("restart?");
 						Start ();
 				}
 		}

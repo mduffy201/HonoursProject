@@ -1,28 +1,60 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using UnityEngine.UI;
 
 public class TitleContols : MonoBehaviour {
 
 	//public GameObject canvas;
 
-	private UnityEngine.UI.InputField inputField;
-	private int toolbarInt = 0;
-	private string[] toolbarStrings = {"EASY","NORMAL","HARD"};
+	public GameObject titleControls;
+	Button btnStart;
+
+	InputField inputField;
+	private int toolbarInt = 1;
+	private string[] toolbarStrings = {"LITTLE","AVERAGE","MUCH"};
 
 
 	public string username;
 
 
+
+
+
+	private void Awake (){
+		titleControls = GameObject.Find ("Canvas");
+		btnStart = titleControls.GetComponentInChildren<Button> ();
+		btnStart.onClick.AddListener (() => btnOnclick ()); 
+		inputField = titleControls.GetComponentInChildren<InputField> ();
+	}
+	private void Update(){
+		if (inputField.text == "") {
+						//Debug.Log ("Button not selectable");	
+						btnStart.interactable = false;
+			btnStart.GetComponentInChildren<Text>().text = "Enter name...";
+		
+				} else {
+			btnStart.interactable = true;	
+			btnStart.GetComponentInChildren<Text>().text = "Click to Start!";
+		}
+	}
 	void OnGUI() {
 
-		toolbarInt = GUI.Toolbar (new Rect(Screen.width/2-170, Screen.height/2-50, 250, 50), toolbarInt, toolbarStrings);
+		toolbarInt = GUI.Toolbar (new Rect(Screen.width/2-105, Screen.height/2-30, 250, 50), toolbarInt, toolbarStrings);
 
 	}
+
+	public void btnOnclick ()
+	{
+
+		username = inputField.text;
+		StartGame();
+		//Debug.Log ("Start Clicked: " + inputField.text);
+	}
+
 	public void StartGame(){
 		PlayerPrefs.SetString("name",username);
 		PlayerPrefs.SetInt("difficulty", toolbarInt);
-		Debug.Log("Space Down");
+		//Debug.Log("Space Down");
 		Application.LoadLevel("Level");
 	}
 }
