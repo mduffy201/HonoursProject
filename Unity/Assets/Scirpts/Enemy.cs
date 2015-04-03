@@ -4,7 +4,9 @@ using System.Collections;
 [RequireComponent (typeof(Rigidbody2D))]
 
 public class Enemy : MonoBehaviour
-{
+{	private AudioSource audio_source;
+	private AudioClip shoot;
+	private AudioClip frog_jump;
 		private Animator anim;
 		private bool facingRight = false; // For determining which way the player is currently facing.
 		private PlayerMovement2D player;
@@ -27,7 +29,7 @@ public class Enemy : MonoBehaviour
 		public float groundedRadius = .2f; // Radius of the overlap circle to determine if grounded
 		public bool grounded = false; // Whether or not the player is grounded.
 		public LayerMask	whatIsGround;
-	public LayerMask	whatIsPlayer;
+		public LayerMask	whatIsPlayer;
 		
 
 		//public Vector2 VELOCITYNTHAT;
@@ -58,6 +60,9 @@ public class Enemy : MonoBehaviour
 
 		void Awake ()
 		{
+		audio_source = GetComponent<AudioSource> ();
+		shoot= (AudioClip) Resources.Load ("SoundFX/enemy_shoot");
+		 frog_jump = (AudioClip) Resources.Load ("SoundFX/frog_jump");
 				level_stats = GameObject.Find ("LevelLogic").GetComponent<LevelStats> ();
 				player = GameObject.FindGameObjectWithTag ("Player").GetComponent<PlayerMovement2D> ();
 				anim = GetComponent<Animator> ();			
@@ -65,6 +70,7 @@ public class Enemy : MonoBehaviour
 
 		void Start ()
 		{
+
 				speed = level_stats.enemy_speed;
 				jump_power = level_stats.enemy_jump_power;
 				//jump_angle = level_stats.enemy_jump_angle;
@@ -79,17 +85,22 @@ public class Enemy : MonoBehaviour
 				vedgeCheckRight = edgeCheckRight - transform.position;
 				jump_counter = jump_timer;
 		
-			//	Debug.Log ("EE type switch" + enemyType.ToString ());
+				//	Debug.Log ("EE type switch" + enemyType.ToString ());
 				switch (enemyType) {
 			
 				case EnemyType.Walker:
+			gameObject.name = "Walker";
 						anim.SetBool ("walker", true);
 						anim.SetBool ("flyer", false);
 						anim.SetBool ("jumper_idle", false);
 						anim.SetBool ("jumper_jump", false);
+			Transform killcheck = transform.Find("EnemyKillCheck");
+			Vector3 newPos2 = new Vector3(0.0f, 0.24f, 0.0f ); 
+			killcheck.Translate(newPos2);
 			//Move_Walker ();
 						break;
 				case EnemyType.Jumper:
+			gameObject.name = "Jumper";
 //						Debug.Log ("JUMPER SET");
 						anim.SetBool ("walker", false);
 						anim.SetBool ("flyer", false);
@@ -100,12 +111,13 @@ public class Enemy : MonoBehaviour
 			//Move_Jumper ();
 						break;
 				case EnemyType.Shooter:
+						gameObject.name = "Shooter";
 						anim.SetBool ("walker", false);
 						anim.SetBool ("flyer", true);
 						anim.SetBool ("jumper_idle", false);
 						anim.SetBool ("jumper_jump", false);
-			Vector3 newPos = new Vector3(transform.position.x, transform.position.y + 1.0f, transform.position.z);
-			transform.Translate(newPos);
+						Vector3 newPos = new Vector3 (transform.position.x, transform.position.y + 1.0f, transform.position.z);
+						transform.Translate (newPos);
 			//Move_Shooter ();
 						break;
 				}
@@ -186,7 +198,7 @@ public class Enemy : MonoBehaviour
 												}
 												if (hit.collider.tag == "Player") {
 														Debug.Log ("HIT: " + hit.collider.name);
-														player.Kill ();
+														player.Kill (EnemyType.Walker);
 												}
 										}
 								} else if (i == 2) {
@@ -198,7 +210,7 @@ public class Enemy : MonoBehaviour
 
 												if (hit.collider.tag == "Player") {
 														Debug.Log ("HIT: " + hit.collider.name);
-														player.Kill ();
+														player.Kill (EnemyType.Walker);
 												}
 										}
 								}
@@ -259,7 +271,7 @@ public class Enemy : MonoBehaviour
 												}
 												if (hit.collider.tag == "Player") {
 														//Debug.Log ("HIT: " + hit.collider.name);
-														player.Kill ();
+														player.Kill (EnemyType.Walker);
 												}
 										}
 								} else if (i == 2) {
@@ -273,7 +285,7 @@ public class Enemy : MonoBehaviour
 
 												if (hit.collider.tag == "Player") {
 														//Debug.Log ("HIT: " + hit.collider.name);
-														player.Kill ();
+														player.Kill (EnemyType.Walker);
 												}
 										}
 								}
@@ -308,7 +320,7 @@ public class Enemy : MonoBehaviour
 //								Debug.Log ("HIT: " + hit.collider.name);
 
 								if (hit.collider.tag == "Player") {
-										player.Kill ();
+										player.Kill (EnemyType.Jumper);
 					
 								}
 						}
@@ -319,6 +331,7 @@ public class Enemy : MonoBehaviour
 				jump_timer--;
 		
 				if (jump_timer < 0) {
+						audio_source.PlayOneShot(frog_jump, 10.0f);
 						rigidbody2D.AddForce (new Vector2 (move * jump_power, jump_power));
 						jump_timer = jump_counter;
 				}
@@ -335,7 +348,7 @@ public class Enemy : MonoBehaviour
 								if (i == 0) {
 					
 										collider2D.enabled = false;
-					hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.3f);
+										hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.2f);
 										collider2D.enabled = true;
 
 										if (hit.collider != null) {
@@ -344,21 +357,25 @@ public class Enemy : MonoBehaviour
 														wall = true;
 							
 												}
+												if (hit.collider.tag == "Enemy") {
+														wall = true;
+							
+												}
 												if (hit.collider.tag == "Player") {
-														player.Kill ();
+														player.Kill (EnemyType.Jumper);
 							
 												}
 										}
 								} else if (i == 1) {
 					
 										collider2D.enabled = false;
-										hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.5f);
+										hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.2f);
 										collider2D.enabled = true;
 										if (hit.collider != null) {
 						
 												if (hit.collider.tag == "Player") {
 														Debug.Log ("HIT: " + hit.collider.name);
-														player.Kill ();
+														player.Kill (EnemyType.Jumper);
 												}
 										}
 								}
@@ -389,25 +406,30 @@ public class Enemy : MonoBehaviour
 								if (i == 0) {
 					
 										collider2D.enabled = false;
-										hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.5f);
+										hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.2f);
 										collider2D.enabled = true;
 					
 //										Debug.Log ("HIT: " + hit);
 										if (hit.collider != null) {
-												Debug.Log ("HIT: " + hit.collider.name);
+//												Debug.Log ("HIT: " + hit.collider.name);
 												if (hit.collider.tag == "Platform") {
 							
 														wall = true;
 												} 
 												if (hit.collider.tag == "Player") {
-														player.Kill ();
+														player.Kill (EnemyType.Jumper);
 							
+												}						
+												if (hit.collider.tag == "Enemy") {
+														wall = true;
+						
 												}
+
 										}
 								} else if (i == 1) {
 					
 										collider2D.enabled = false;
-										hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.5f);
+										hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.2f);
 										collider2D.enabled = true;
 					
 										//	Debug.Log ("HIT: " + hit);
@@ -415,7 +437,7 @@ public class Enemy : MonoBehaviour
 						
 												if (hit.collider.tag == "Player") {
 														//Debug.Log ("HIT: " + hit.collider.name);
-														player.Kill ();
+														player.Kill (EnemyType.Jumper);
 												}
 										}
 								}
@@ -462,7 +484,7 @@ public class Enemy : MonoBehaviour
 				shot_timer--;	
 				if (shot_timer < 0) {
 						pause = true;
-						shot_timer = 100.0f;
+						shot_timer = level_stats.enemy_shot_timer;
 						if (level_stats.enemy_shot_difficulty == 0) {
 								Shoot ();
 						} else {
@@ -473,36 +495,36 @@ public class Enemy : MonoBehaviour
 
 				
 			
-						bool wall = false;
-						hit = new RaycastHit2D ();
-						for (int i = 0; i < 2; i++) {
+				bool wall = false;
+				hit = new RaycastHit2D ();
+				for (int i = 0; i < 2; i++) {
 				
-								if (i == 0) {
+						if (i == 0) {
 					
-										collider2D.enabled = false;
-										hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.3f);
-										collider2D.enabled = true;
+								collider2D.enabled = false;
+								hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.3f);
+								collider2D.enabled = true;
 					
-										if (hit.collider != null) {
-												Debug.Log ("HIT: " + hit.collider.name);
+								if (hit.collider != null) {
+//										Debug.Log ("HIT: " + hit.collider.name);
 
-												if (hit.collider.tag == "Player") {
-														player.Kill ();
-												}
+										if (hit.collider.tag == "Player") {
+												player.Kill (EnemyType.Shooter);
 										}
-								} else if (i == 1) {
-										collider2D.enabled = false;
-										hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.5f);
-										collider2D.enabled = true;
-										if (hit.collider != null) {
+								}
+						} else if (i == 1) {
+								collider2D.enabled = false;
+								hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.5f);
+								collider2D.enabled = true;
+								if (hit.collider != null) {
 						
-												if (hit.collider.tag == "Player") {
-														Debug.Log ("HIT: " + hit.collider.name);
-														player.Kill ();
-												}
+										if (hit.collider.tag == "Player") {
+												Debug.Log ("HIT: " + hit.collider.name);
+												player.Kill (EnemyType.Shooter);
 										}
 								}
 						}
+				}
 			
 			
 			
@@ -546,7 +568,7 @@ public class Enemy : MonoBehaviour
 				// b.direction = Vector3.up;
 				//Instantiate ((GameObject)b, shot_spawn [0], Quaternion.identity) as GameObject;
 
-
+		audio_source.PlayOneShot(shoot, 10.0f);
 				for (int i = 0; i < shot; i++) {
 				
 						bullets [i] = Instantiate ((GameObject)Resources.Load ("Bullet/BulletPrefab"), shot_spawn [i], Quaternion.identity) as GameObject;
@@ -592,7 +614,7 @@ public class Enemy : MonoBehaviour
 				// b.direction = Vector3.up;
 				//Instantiate ((GameObject)b, shot_spawn [0], Quaternion.identity) as GameObject;
 		
-		
+		audio_source.PlayOneShot(shoot, 10.0f);
 				for (int i = 0; i < shot; i++) {
 			
 						bullets [i] = Instantiate ((GameObject)Resources.Load ("Bullet/BulletPrefab"), shot_spawn [i], Quaternion.identity) as GameObject;

@@ -36,12 +36,22 @@ public class PlayerManager : MonoBehaviour {
 			
 		}
 	}
-	bool endPlaced = false;
+
 	public void LoadEndPoint(){
+		bool endPlaced = false;
 		int level_length = levelMap.GetLength (0);
 		int level_height = levelMap.GetLength (1);
 		
-		for (int i = 0; i < level_length; i++) {
+		/*for (int i = 0; i < level_length; i++) {
+			for (int j = 0; j< level_height; j++) {
+				if (levelMap [i, j].isEndSpawn() && endPlaced == false) {
+					endTriggerPoint = (GameObject)Instantiate (end_trigger, new Vector3 (levelMap [i, j].tilePos.x, levelMap [i, j].tilePos.y, 0.0f), Quaternion.identity);
+					endPlaced = true;
+				}
+			}
+			
+		}*/
+		for (int i = level_length -1; i > 0; i--) {
 			for (int j = 0; j< level_height; j++) {
 				if (levelMap [i, j].isEndSpawn() && endPlaced == false) {
 					endTriggerPoint = (GameObject)Instantiate (end_trigger, new Vector3 (levelMap [i, j].tilePos.x, levelMap [i, j].tilePos.y, 0.0f), Quaternion.identity);

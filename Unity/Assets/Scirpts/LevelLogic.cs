@@ -4,6 +4,16 @@ using System.Collections;
 public class LevelLogic: MonoBehaviour
 {
 
+	//megaman - cutman
+	//megman - bombsman
+	//megman - gutsman
+	//megaman - elecman
+	//megaman - iceman
+	//megman - fireman
+
+
+
+
 
 		private LevelManager levelManager;
 		private EnemyManager enemyManager;

@@ -3,6 +3,9 @@ using System.Collections;
 
 public class PlayerMovement2D : MonoBehaviour
 {
+		private AudioSource audio_source;
+		private AudioClip jump;
+		private AudioClip enemy_death;
 		LevelStats levelStats;
 		private bool facingRight = true; // For determining which way the player is currently facing.
 	
@@ -38,7 +41,10 @@ public class PlayerMovement2D : MonoBehaviour
 
 		private void Awake ()
 		{
+				jump = (AudioClip)Resources.Load ("SoundFX/player_jump");
+				enemy_death = (AudioClip)Resources.Load ("SoundFX/enemy_death");
 				levelStats = GameObject.Find ("LevelLogic").GetComponent<LevelStats> ();
+				audio_source = GetComponent<AudioSource> ();		
 				ray_length = 0.3f; //GetComponent<Renderer> ().bounds.size.x / 2*5;
 				ray_height = 0.56f;// (GetComponent<Renderer> ().bounds.size.y/2)*5;
 				anim = GetComponent<Animator> ();
@@ -83,6 +89,7 @@ public class PlayerMovement2D : MonoBehaviour
 		
 				if (Input.GetKey (KeyCode.UpArrow)) {
 						if (grounded && !keyDown) {
+								audio_source.PlayOneShot (jump, 10.0f);
 								keyDown = true;
 								y_velocity = jump_force;
 								//grounded = false;						
@@ -173,12 +180,13 @@ public class PlayerMovement2D : MonoBehaviour
 		}
 
 		int frame = 0;
-	public	bool groundedR = true;
-	public	bool groundedL = true;
+		public	bool groundedR = true;
+		public	bool groundedL = true;
+
 		private void CastRays ()
 		{
 				frame++;
-				RaycastHit2D[] hitInfo = new RaycastHit2D[5];
+				RaycastHit2D[] hitInfo = new RaycastHit2D[6];
 				float offsetx = x_velocity * Time.deltaTime;
 				float offsety = 0.0f;
 				if (!grounded) {
@@ -210,6 +218,7 @@ public class PlayerMovement2D : MonoBehaviour
 										wall_right = true;
 								} 
 						}
+
 						//Check Left
 						if (i == 1) {
 								hit = Physics2D.Raycast (transform.position, -Vector2.right, ray_length + offsetx, whatIsGround);
@@ -332,10 +341,25 @@ public class PlayerMovement2D : MonoBehaviour
 						Application.LoadLevel ("TitleScreen");
 				}
 				if (collider.name == "EnemyKillCheck") {
-
-						Debug.Log ("Enemy Killed by head");
+						audio_source.PlayOneShot (enemy_death, 10.0f);
+						//Debug.Log ("Enemy Killed by head");
 						levelStats.kills++;
 						y_velocity += kill_bounce;
+						//Debug.Log("Enemy Killed: " + collider.gameObject.transform.parent.gameObject.name);
+
+						string enemyType = collider.gameObject.transform.parent.gameObject.name;
+						switch (enemyType) {
+						case "Walker":
+								levelStats.kills_walker++;
+								break;
+						case "Jumper":
+								levelStats.kills_jumper++;
+								break;
+						case "Shooter":
+								levelStats.kills_shooter++;
+								break;
+						}
+
 						Destroy (collider.gameObject.transform.parent.gameObject);
 			
 						//Application.LoadLevel("TitleScreen");
@@ -343,31 +367,37 @@ public class PlayerMovement2D : MonoBehaviour
 				}
 				if (collider.tag == "bullet") {
 						Debug.Log ("SHOT " + collider.name);
-						Kill ();
+						Kill (Enemy.EnemyType.Shooter);
 				}
 				if (collider.tag == "finish") {
 						Debug.Log ("LEVEL END");
 						levelStats.DisplayLevelEnd ();
-
-						//Kill();
 				}
-
-				/*if (collider.name == "EdgeCheckLeft" || collider.name == "EdgeCheckRight") {
-						Debug.Log ("Player Dead");		
-						Application.LoadLevel (Application.loadedLevelName);
-				}*/
 		}
 
 		private void CheckFallDeath ()
 		{
 				if (transform.position.y < -5) {
+						levelStats.deaths_by_fall++;
 						Die ();		
 				}
 		
 		}
 
-		public void Kill ()
+		public void Kill (Enemy.EnemyType enemy)
 		{
+				switch (enemy) {
+				case Enemy.EnemyType.Walker:
+						levelStats.deaths_by_walker++;
+						break;
+				case Enemy.EnemyType.Jumper:
+						levelStats.deaths_by_jumper++;
+						break;
+				case Enemy.EnemyType.Shooter:
+						levelStats.deaths_by_shooter++;
+						break;
+		
+				}
 				//Debug.Log ("Killed!");
 				Die ();
 	

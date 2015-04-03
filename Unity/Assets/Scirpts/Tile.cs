@@ -167,8 +167,10 @@ public class Tile
 						if (this.placeInArray.x == level_length - 1 ||
 								this.placeInArray.x == level_length - 2 ||
 								this.placeInArray.x == level_length - 3) {
-								EndSpawnRule ();		
+								//EndSpawnRule ();		
 						}
+			EndSpawnRule ();
+						PlayerSpawnRule ();	
 				}
 				
 
@@ -176,7 +178,7 @@ public class Tile
 		    this.tilePos.x == 1 ||
 		    this.tilePos.x == 2 ||
 		    this.tilePos.x == 3) {
-						PlayerSpawnRule ();		
+					//	PlayerSpawnRule ();		
 				} 
 
 
