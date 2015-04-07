@@ -11,7 +11,7 @@ public class TitleContols : MonoBehaviour {
 
 	InputField inputField;
 	private int toolbarInt = 1;
-	private string[] toolbarStrings = {"LITTLE","AVERAGE","MUCH"};
+	private string[] toolbarStrings = {"LOW","AVERAGE","HIGH"};
 
 
 	public string username;
@@ -27,6 +27,10 @@ public class TitleContols : MonoBehaviour {
 		inputField = titleControls.GetComponentInChildren<InputField> ();
 	}
 	private void Update(){
+		if (Input.GetKey (KeyCode.Escape)) {
+			Application.Quit();		
+			Debug.Log("QUIT");
+		}
 		if (inputField.text == "") {
 						//Debug.Log ("Button not selectable");	
 						btnStart.interactable = false;
@@ -54,6 +58,7 @@ public class TitleContols : MonoBehaviour {
 	public void StartGame(){
 		PlayerPrefs.SetString("name",username);
 		PlayerPrefs.SetInt("difficulty", toolbarInt);
+		PlayerPrefs.SetString("id", System.DateTime.Now.Millisecond.ToString () + System.DateTime.Now.Second.ToString());
 		//Debug.Log("Space Down");
 		Application.LoadLevel("Level");
 	}

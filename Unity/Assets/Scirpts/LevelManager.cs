@@ -37,14 +37,17 @@ public class LevelManager : MonoBehaviour
 		
 		void Awake ()
 		{
-				
-				level_stats = gameObject.GetComponent<LevelStats> ();
+		//Debug.Log ("Level Manager Awake");
+				//level_stats = gameObject.GetComponent<LevelStats> ();
 				//Debug.Log (level_stats.Axiom);
 		
 		}
-
+	void  Start(){
+		level_stats = gameObject.GetComponent<LevelStats> ();
+	}
 		public void UpdateGapsAndPlatforms ()
 		{
+
 				gapPlaformManager.LoadMap (full_level);
 
 				//gapPlaformManager.findAverage ();
@@ -88,18 +91,18 @@ public class LevelManager : MonoBehaviour
 
 				gap_average_length_Actual = gapPlaformManager.findAverage ();
 				if (gap_average_length_Actual < gap_average_length) {
-						Debug.Log ("incrase average! " + gap_average_length_Actual.ToString () +
-								" < " + gap_average_length.ToString ());
+						//Debug.Log ("incrase average! " + gap_average_length_Actual.ToString () +
+							//	" < " + gap_average_length.ToString ());
 						while (gap_average_length_Actual < gap_average_length) {
-								Debug.Log ("Inside while");
+//								Debug.Log ("Inside while");
 								gapPlaformManager.IncreaseAverage ();
 								gap_average_length_Actual = gapPlaformManager.findAverage ();
 						}
 
 				} else if (gap_average_length_Actual > gap_average_length) {
 
-			Debug.Log ("reduce average! " + gap_average_length_Actual.ToString () +
-			           " < " + gap_average_length.ToString ());
+			//Debug.Log ("reduce average! " + gap_average_length_Actual.ToString () +
+			  //         " < " + gap_average_length.ToString ());
 
 						while (gap_average_length_Actual > gap_average_length) {
 								gapPlaformManager.ReduceAverage ();
@@ -353,7 +356,7 @@ public class LevelManager : MonoBehaviour
 		//Function set - Construct level layout using l-system==============================
 		private void CreateLSystemString ()
 		{
-		
+		Debug.Log ("Create L-system using: " + axiom.ToString ());
 				string temp = "";
 				string result = "";
 				int iterations = 2;

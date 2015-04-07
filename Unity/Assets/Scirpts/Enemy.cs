@@ -118,6 +118,7 @@ public class Enemy : MonoBehaviour
 						anim.SetBool ("jumper_jump", false);
 						Vector3 newPos = new Vector3 (transform.position.x, transform.position.y + 1.0f, transform.position.z);
 						transform.Translate (newPos);
+		
 			//Move_Shooter ();
 						break;
 				}
@@ -185,7 +186,7 @@ public class Enemy : MonoBehaviour
 								} else if (i == 1) {
 					
 										collider2D.enabled = false;
-										hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.3f);
+										hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.1f);
 										collider2D.enabled = true;
 										if (hit.collider != null) {
 												//	Debug.Log ("HIT: " + hit.collider.name);
@@ -204,7 +205,7 @@ public class Enemy : MonoBehaviour
 								} else if (i == 2) {
 					
 										collider2D.enabled = false;
-										hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.3f);
+										hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.1f);
 										collider2D.enabled = true;
 										if (hit.collider != null) {
 
@@ -256,7 +257,7 @@ public class Enemy : MonoBehaviour
 								else if (i == 1) {
 
 										collider2D.enabled = false;
-										hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.3f);
+										hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.1f);
 										collider2D.enabled = true;
 
 										//	Debug.Log ("HIT: " + hit);
@@ -277,7 +278,7 @@ public class Enemy : MonoBehaviour
 								} else if (i == 2) {
 					
 										collider2D.enabled = false;
-										hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.3f);
+										hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.1f);
 										collider2D.enabled = true;
 					
 										//	Debug.Log ("HIT: " + hit);
@@ -314,7 +315,7 @@ public class Enemy : MonoBehaviour
 						anim.SetBool ("jumper_jump", true);
 
 						collider2D.enabled = false;
-						hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.up, 0.4f);
+						hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.up, 0.2f);
 						collider2D.enabled = true;
 						if (hit.collider != null) {
 //								Debug.Log ("HIT: " + hit.collider.name);
@@ -348,11 +349,11 @@ public class Enemy : MonoBehaviour
 								if (i == 0) {
 					
 										collider2D.enabled = false;
-										hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.2f);
+										hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.1f);
 										collider2D.enabled = true;
 
 										if (hit.collider != null) {
-												Debug.Log ("HIT: " + hit.collider.name);
+//												Debug.Log ("HIT: " + hit.collider.name);
 												if (hit.collider.tag == "Platform") {
 														wall = true;
 							
@@ -369,7 +370,7 @@ public class Enemy : MonoBehaviour
 								} else if (i == 1) {
 					
 										collider2D.enabled = false;
-										hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.2f);
+										hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.1f);
 										collider2D.enabled = true;
 										if (hit.collider != null) {
 						
@@ -406,7 +407,7 @@ public class Enemy : MonoBehaviour
 								if (i == 0) {
 					
 										collider2D.enabled = false;
-										hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.2f);
+										hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.1f);
 										collider2D.enabled = true;
 					
 //										Debug.Log ("HIT: " + hit);
@@ -429,7 +430,7 @@ public class Enemy : MonoBehaviour
 								} else if (i == 1) {
 					
 										collider2D.enabled = false;
-										hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.2f);
+										hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.1f);
 										collider2D.enabled = true;
 					
 										//	Debug.Log ("HIT: " + hit);
@@ -502,7 +503,7 @@ public class Enemy : MonoBehaviour
 						if (i == 0) {
 					
 								collider2D.enabled = false;
-								hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.3f);
+								hit = Physics2D.Raycast (transform.position + vedgeCheckLeft, -Vector2.right, 0.1f);
 								collider2D.enabled = true;
 					
 								if (hit.collider != null) {
@@ -514,7 +515,7 @@ public class Enemy : MonoBehaviour
 								}
 						} else if (i == 1) {
 								collider2D.enabled = false;
-								hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.5f);
+								hit = Physics2D.Raycast (transform.position + vedgeCheckRight, Vector2.right, 0.1f);
 								collider2D.enabled = true;
 								if (hit.collider != null) {
 						

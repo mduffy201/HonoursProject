@@ -3,6 +3,7 @@ using System.Collections;
 
 public class PlayerMovement2D : MonoBehaviour
 {
+		private LevelLogic level_logic;
 		private AudioSource audio_source;
 		private AudioClip jump;
 		private AudioClip enemy_death;
@@ -50,6 +51,11 @@ public class PlayerMovement2D : MonoBehaviour
 				anim = GetComponent<Animator> ();
 		}
 
+		void Start ()
+		{
+				level_logic = GameObject.Find ("LevelLogic").GetComponent<LevelLogic> ();
+		}
+
 		private void FixedUpdate ()
 		{
 
@@ -77,11 +83,13 @@ public class PlayerMovement2D : MonoBehaviour
 				
 
 		}
-
+	bool limit_jump = false;
 		private void CheckVerticalMovement ()
 		{
 
+		//Fall
 				if (grounded) {
+			limit_jump = false;
 						y_velocity = 0;
 				} else {
 						y_velocity -= gravity;
@@ -89,15 +97,22 @@ public class PlayerMovement2D : MonoBehaviour
 		
 				if (Input.GetKey (KeyCode.UpArrow)) {
 						if (grounded && !keyDown) {
-								audio_source.PlayOneShot (jump, 10.0f);
-								keyDown = true;
+							
+							
 								y_velocity = jump_force;
-								//grounded = false;						
+								//grounded = false;	
+								keyDown = true;
 								levelStats.jumps++;
+								audio_source.PlayOneShot (jump, 10.0f);
 						}
-				} else {
+				}else {
+					
 						keyDown = false;		
 				}
+		/*if (Input.GetKeyUp (KeyCode.UpArrow) && !limit_jump) {
+			limit_jump = true;
+			y_velocity = 0;		
+		}*/
 		}
 
 		private void CheckHorizontalMovement ()
@@ -144,17 +159,13 @@ public class PlayerMovement2D : MonoBehaviour
 								if (x_velocity < max_velocity) {
 										x_velocity = x_velocity + acceleration / reduced_air_control;
 								}
-								//moving = true;
 								levelStats.time_moving_right += Time.deltaTime;
 						} 
 				} else {
-						//keyUp = true;
 						if (x_velocity > 0) {
 								x_velocity = x_velocity - drag;
 						} else {
 								x_velocity = 0;
-								//moving = false;	
-								//wall_bounce = false;
 						}
 				}
 	
@@ -344,6 +355,7 @@ public class PlayerMovement2D : MonoBehaviour
 						audio_source.PlayOneShot (enemy_death, 10.0f);
 						//Debug.Log ("Enemy Killed by head");
 						levelStats.kills++;
+			y_velocity = 0;
 						y_velocity += kill_bounce;
 						//Debug.Log("Enemy Killed: " + collider.gameObject.transform.parent.gameObject.name);
 
@@ -405,8 +417,10 @@ public class PlayerMovement2D : MonoBehaviour
 
 		private void Die ()
 		{
+				levelStats.total_level_time += Time.timeSinceLevelLoad;
 				levelStats.deaths++;
 				Debug.Log ("Player Dead");		
+				//level_logic.Reload ();
 				Application.LoadLevel (Application.loadedLevelName);
 		}
 }
