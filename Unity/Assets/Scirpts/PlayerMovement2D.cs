@@ -47,7 +47,7 @@ public class PlayerMovement2D : MonoBehaviour
 				levelStats = GameObject.Find ("LevelLogic").GetComponent<LevelStats> ();
 				audio_source = GetComponent<AudioSource> ();		
 				ray_length = 0.3f; //GetComponent<Renderer> ().bounds.size.x / 2*5;
-				ray_height = 0.56f;// (GetComponent<Renderer> ().bounds.size.y/2)*5;
+				ray_height = 0.40f;// (GetComponent<Renderer> ().bounds.size.y/2)*5;
 				anim = GetComponent<Animator> ();
 		}
 
@@ -197,7 +197,7 @@ public class PlayerMovement2D : MonoBehaviour
 		private void CastRays ()
 		{
 				frame++;
-				RaycastHit2D[] hitInfo = new RaycastHit2D[6];
+				RaycastHit2D[] hitInfo = new RaycastHit2D[8];
 				float offsetx = x_velocity * Time.deltaTime;
 				float offsety = 0.0f;
 				if (!grounded) {
@@ -229,6 +229,26 @@ public class PlayerMovement2D : MonoBehaviour
 										wall_right = true;
 								} 
 						}
+			if (i == 6) {
+				//Debug.Log ("CAST RAYS (RIGHT)");
+				Vector3 castPos = new Vector3(transform.position.x, transform.position.y - (ray_height/2), transform.position.z);
+
+				hit = Physics2D.Raycast (castPos, Vector2.right, ray_length + offsetx, whatIsGround);
+				//Debug.Log ("RIGHT RAY: " + hit.collider.name);				
+				if (hit.collider == null) {
+					//										Debug.Log ("RIGHT RAY HIT NULL");
+					wall_right = false;
+				}  else if (hit.collider.tag == "Platform") {
+					//Debug.Log ("RIGHT RAY HIT: " + hit.collider.tag.ToString () + " " + hit.collider.transform.position.ToString () + " ");
+					if (!wall_right) {
+						Vector3 newPos = new Vector3 (hit.distance - ray_length, 0.0f, 0.0f);
+						//Debug.Log ("MOVE TO" + newPos.ToString ());
+						transform.Translate (newPos);
+					}
+					x_velocity = 0;
+					wall_right = true;
+				} 
+			}
 
 						//Check Left
 						if (i == 1) {
@@ -256,6 +276,30 @@ public class PlayerMovement2D : MonoBehaviour
 					
 								}
 						}
+			if (i == 7) {
+				Vector3 castPos = new Vector3(transform.position.x, transform.position.y - (ray_height/2), transform.position.z);
+
+				hit = Physics2D.Raycast (castPos, -Vector2.right, ray_length + offsetx, whatIsGround);
+				//Debug.Log ("LEFT RAY: " + hit.collider.name);	
+				if (hit.collider == null) {
+					//Debug.Log ("LEFT RAY HIT NULL");
+					wall_left = false;
+				}  else if (hit.collider.tag == "Platform") {
+					
+					//Debug.Log ("RIGHT RAY HIT: " + hit.collider.tag.ToString () + " " + hit.collider.transform.position.ToString () + " ");
+					if (!wall_left) {
+						Vector3 newPos = new Vector3 (-hit.distance + ray_length, 0.0f, 0.0f);
+						Debug.Log ("MOVE TO" + newPos.ToString ());
+						transform.Translate (newPos);
+					}
+					x_velocity = 0;
+					wall_left = true;
+					//Debug.Log ("LEFT RAY HIT: " + hit.collider.tag.ToString ());
+					//velocity = 0;
+					//wall_left = true;
+					
+				}
+			}
 						//Check Ceiling
 						if (i == 2) {
 								hit = Physics2D.Raycast (transform.position, Vector2.up, 0.5f, whatIsGround);

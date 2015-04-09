@@ -16,7 +16,7 @@ namespace UnitySampleAssets._2D
         private Vector3 lastTargetPosition;
         private Vector3 currentVelocity;
         private Vector3 lookAheadPos;
-
+		public  float y_pos = 1.0f;
         // Use this for initialization
         private void Start()
         {
@@ -54,8 +54,9 @@ namespace UnitySampleAssets._2D
             }
 
             Vector3 aheadTargetPos = target.position + lookAheadPos + Vector3.forward*offsetZ;
-            Vector3 newPos = Vector3.SmoothDamp(transform.position, aheadTargetPos, ref currentVelocity, damping);
-
+			Vector3 newnewPos = new Vector3 (aheadTargetPos.x, y_pos, aheadTargetPos.z);
+			Vector3 newPos = Vector3.SmoothDamp(transform.position,newnewPos , ref currentVelocity, damping);
+			//aheadTargetPos
             transform.position = newPos;
 
             lastTargetPosition = target.position;
